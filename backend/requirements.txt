@@ -12,3 +12,4 @@ pillow>=9.5.0
 scikit-learn>=1.2.0
 pytesseract>=0.3.10
 numpy>=1.24.0
+email-validator>=2.0.0
