@@ -1,170 +1,178 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { User, Mail, Phone, Calendar, MapPin, CheckCircle, Loader2 } from 'lucide-react';
+import { User, Mail, Phone, Calendar, Loader2, Save, MapPin } from 'lucide-react';
+import { useToast } from '../components/ToastProvider';
 
 export default function Profile() {
-  const { user, updateProfile } = useAuthStore();
-  const [fullName, setFullName] = useState(user?.full_name || '');
-  const [email, setEmail] = useState(user?.email || '');
-  const [phone, setPhone] = useState(user?.phone || '');
-  const [dob, setDob] = useState(user?.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '');
-  const [gender, setGender] = useState(user?.gender || '');
-  const [address, setAddress] = useState(user?.address || '');
-  const [city, setCity] = useState(user?.city || 'Chennai');
+  const { user, updateProfile, loading } = useAuthStore();
+  const toast = useToast();
+  
+  const [formData, setFormData] = useState({
+    full_name: user?.full_name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    date_of_birth: user?.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '',
+    gender: user?.gender || '',
+    address: user?.address || '',
+    city: user?.city || '',
+  });
 
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(null);
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setSuccess(false);
-    setError(null);
-
     try {
-      await updateProfile({
-        full_name: fullName,
-        email: email || null,
-        phone: phone || null,
-        date_of_birth: dob ? new Date(dob).toISOString() : null,
-        gender: gender || null,
-        address: address || null,
-        city: city
-      });
-      setSuccess(true);
+      await updateProfile(formData);
+      toast.success('Profile updated successfully');
     } catch (err) {
-      setError(err.message || 'Profile update failed');
-    } finally {
-      setLoading(false);
+      toast.error(err.message || 'Failed to update profile');
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-      <div>
-        <h1 className="font-display font-bold text-3xl text-white flex items-center gap-2">
-          <User className="h-8 w-8 text-blue-500" />
-          <span>User Profile Management</span>
-        </h1>
-        <p className="text-sm text-slate-400 mt-1">Keep your identity credentials up-to-date for pass eligibility scans.</p>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      
+      {/* Profile Header */}
+      <div className="glass-panel p-8 rounded-3xl relative overflow-hidden animate-fade-in-up">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-tn-primary/5 rounded-full blur-[50px] -z-10 translate-x-1/2 -translate-y-1/2" />
+        
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+          <div className="relative">
+            <div className="h-24 w-24 rounded-full bg-gradient-to-br from-tn-primary to-blue-600 flex items-center justify-center text-3xl font-bold text-white shadow-lg border-4 border-white">
+              {user?.full_name?.charAt(0) || 'U'}
+            </div>
+            <div className="absolute bottom-0 right-0 bg-emerald-500 h-5 w-5 rounded-full border-2 border-white" />
+          </div>
+          
+          <div className="text-center sm:text-left space-y-1">
+            <h1 className="font-display font-bold text-2xl text-tn-text">{user?.full_name}</h1>
+            <p className="text-sm font-medium text-tn-text-secondary capitalize">{user?.role} Account</p>
+            <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-3">
+              <span className="badge badge-info bg-tn-primary/5 border-tn-primary/10">Member since {new Date(user?.created_at).getFullYear()}</span>
+              {user?.is_active && <span className="badge badge-success">Active Status</span>}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="glass-panel p-6 sm:p-8 rounded-2xl border border-white/5">
-        {success && (
-          <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-400 flex items-center gap-2">
-            <CheckCircle className="h-4.5 w-4.5" />
-            <span>Profile details updated successfully!</span>
-          </div>
-        )}
-
-        {error && (
-          <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-400">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6 text-xs">
+      {/* Edit Profile Form */}
+      <div className="glass-panel p-8 rounded-3xl animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <h2 className="font-display font-bold text-lg text-tn-text mb-6">Personal Information</h2>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-slate-400">Full Name</label>
-              <div className="mt-1 relative">
+              <label className="form-label">Full Name</label>
+              <div className="relative">
                 <input
                   type="text"
+                  name="full_name"
+                  value={formData.full_name}
+                  onChange={handleChange}
+                  className="form-input"
                   required
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-[#0c102b] border border-white/10 rounded-xl text-white focus:outline-none focus:border-blue-500"
                 />
-                <User className="absolute left-3 top-3.5 h-4.5 w-4.5 text-slate-500" />
+                <User className="absolute left-3 top-3.5 h-4 w-4 text-tn-text-muted" />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-400">Email Address</label>
-              <div className="mt-1 relative">
+              <label className="form-label">Email Address</label>
+              <div className="relative">
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-[#0c102b] border border-white/10 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="form-input"
                 />
-                <Mail className="absolute left-3 top-3.5 h-4.5 w-4.5 text-slate-500" />
+                <Mail className="absolute left-3 top-3.5 h-4 w-4 text-tn-text-muted" />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-400">Phone Number</label>
-              <div className="mt-1 relative">
+              <label className="form-label">Phone Number</label>
+              <div className="relative">
                 <input
                   type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-[#0c102b] border border-white/10 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="form-input"
                 />
-                <Phone className="absolute left-3 top-3.5 h-4.5 w-4.5 text-slate-500" />
+                <Phone className="absolute left-3 top-3.5 h-4 w-4 text-tn-text-muted" />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-400">Date of Birth</label>
-              <div className="mt-1 relative">
+              <label className="form-label">Date of Birth</label>
+              <div className="relative">
                 <input
                   type="date"
-                  value={dob}
-                  onChange={(e) => setDob(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-[#0c102b] border border-white/10 rounded-xl text-white focus:outline-none"
+                  name="date_of_birth"
+                  value={formData.date_of_birth}
+                  onChange={handleChange}
+                  className="form-input"
                 />
-                <Calendar className="absolute left-3 top-3.5 h-4.5 w-4.5 text-slate-500" />
+                <Calendar className="absolute left-3 top-3.5 h-4 w-4 text-tn-text-muted" />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-400">Registered City</label>
-              <div className="mt-1 relative">
-                <input
-                  type="text"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-[#0c102b] border border-white/10 rounded-xl text-white focus:outline-none focus:border-blue-500"
-                />
-                <MapPin className="absolute left-3 top-3.5 h-4.5 w-4.5 text-slate-500" />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-slate-400">Gender</label>
+              <label className="form-label">Gender</label>
               <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                className="mt-1 w-full px-4 py-3 bg-[#0c102b] border border-white/10 rounded-xl text-white focus:outline-none"
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="form-select"
               >
-                <option value="">Select Gender</option>
+                <option value="">Prefer not to say</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
               </select>
             </div>
+
+            <div>
+              <label className="form-label">City</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  className="form-input"
+                />
+                <MapPin className="absolute left-3 top-3.5 h-4 w-4 text-tn-text-muted" />
+              </div>
+            </div>
+            
+            <div className="sm:col-span-2">
+              <label className="form-label">Full Address</label>
+              <textarea
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                rows="3"
+                className="w-full p-3 bg-tn-card-hover border border-tn-border rounded-xl text-tn-text text-sm focus:border-tn-primary focus:ring-2 focus:ring-tn-primary/10 transition-all outline-none resize-none"
+              ></textarea>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-slate-400">Home Address</label>
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="mt-1 w-full px-4 py-3 bg-[#0c102b] border border-white/10 rounded-xl text-white focus:outline-none focus:border-blue-500"
-            />
-          </div>
-
-          <div className="pt-2">
+          <div className="pt-4 flex justify-end">
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-neon flex items-center gap-2"
+              className="btn-primary"
             >
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              <span>Save Profile</span>
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              <span>Save Changes</span>
             </button>
           </div>
         </form>
