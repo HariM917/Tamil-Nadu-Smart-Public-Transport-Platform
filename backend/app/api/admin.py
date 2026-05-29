@@ -1,6 +1,9 @@
 from typing import List, Optional
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+import os
+import csv
+import re
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
@@ -192,3 +195,81 @@ def get_analytics(
         "recent_passes": recent_passes_serialized,
         "weekly_bookings": weekly_bookings
     }
+
+
+@router.get("/fleet-analytics")
+def get_fleet_analytics(
+    current_admin: User = Depends(get_admin_user)
+):
+    """Parse dataset.csv and return historical operational metrics of the transport fleet."""
+    # Find dataset.csv
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+    csv_path = os.path.join(project_root, "dataset.csv")
+    
+    if not os.path.exists(csv_path):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Fleet analytics dataset file not found."
+        )
+        
+    try:
+        years = ["2020-21", "2021-22", "2022-23", "2023-24", "2024-25"]
+        items_map = {
+            "TOTAL FLEET": "total_fleet",
+            "AVERAGE AGE OF BUS": "average_age",
+            "NEW BUSES PUT ON ROAD": "new_buses",
+            "SCHEDULED SERVICES": "scheduled_services",
+            "EFFECTIVE KMS (IN LAKHS)": "effective_kms_lakhs",
+            "KM/BUS/DAY": "km_per_bus_day",
+            "% OF FLEET UTILIZATION": "fleet_utilization_pct",
+            "KM EFFICIENCY %": "km_efficiency_pct",
+            "% OF OCCUPANCY": "occupancy_pct",
+            "BREAKDOWNS": "breakdowns",
+            "B.D./10,000 KMS.": "breakdowns_per_10k",
+            "ACCT/1,00,000 KM": "accidents_per_100k",
+            "TYRE LIFE IN KM": "tyre_life_km",
+            "PASSENGER/DAY (IN LAKHS)": "passengers_lakhs_day",
+            "MEN/BUS (FOR FLEET)": "men_per_bus"
+        }
+        
+        # Prepare list for pivoted data
+        by_year = {yr: {"year": yr} for yr in years}
+        by_item = []
+        
+        with open(csv_path, mode="r", encoding="utf-8-sig") as f:
+            reader = csv.reader(f)
+            # Skip header
+            header = next(reader)
+            for row in reader:
+                if len(row) < 7:
+                    continue
+                item_name = row[1].strip()
+                item_key = items_map.get(item_name) or re.sub(r'[^a-z0-9]', '_', item_name.lower())
+                
+                # Load values for each year
+                item_values = {}
+                for idx, yr in enumerate(years):
+                    val_str = row[idx + 2].replace(",", "").strip()
+                    try:
+                        val = float(val_str) if "." in val_str or item_key in ["average_age", "breakdowns_per_10k", "accidents_per_100k", "men_per_bus"] else int(val_str)
+                    except ValueError:
+                        val = val_str
+                    
+                    item_values[yr] = val
+                    by_year[yr][item_key] = val
+                
+                by_item.append({
+                    "item": item_name,
+                    "key": item_key,
+                    "values": item_values
+                })
+                
+        return {
+            "by_year": list(by_year.values()),
+            "by_item": by_item
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to parse analytics dataset: {str(e)}"
+        )

@@ -7,10 +7,10 @@ logger = logging.getLogger(__name__)
 # Try to import pytesseract, handle import error gracefully
 try:
     import pytesseract
-    # You can specify tesseract path if needed, e.g.
-    # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
     TESSERACT_AVAILABLE = True
-except ImportError:
+except Exception as e:
+    logger.warning(f"Failed to initialize pytesseract: {e}")
     TESSERACT_AVAILABLE = False
 
 

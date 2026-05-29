@@ -1,14 +1,13 @@
 import { create } from 'zustand';
+import { supabase } from '../services/supabaseClient';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 /**
- * Validate stored token format (basic check — not a full JWT decode).
+ * Basic check for token presence.
  */
 function isValidStoredToken(token) {
-  if (!token || typeof token !== 'string') return false;
-  const parts = token.split('.');
-  return parts.length === 3;
+  return token && typeof token === 'string' && token.length > 10;
 }
 
 // Validate stored auth on initial load
@@ -39,34 +38,41 @@ export const useAuthStore = create((set, get) => ({
   login: async (username, password) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`${API_URL}/auth/login/json`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: username.includes('@') ? username : null,
-          phone: !username.includes('@') ? username : null,
-          password: password,
-          full_name: 'Login Form Placeholder',
-        }),
+      // 1. Sign in with Supabase Auth
+      const { data, error: sbError } = await supabase.auth.signInWithPassword({
+        email: username,
+        password: password,
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.detail || 'Login failed');
+      if (sbError) {
+        throw new Error(sbError.message);
       }
 
-      localStorage.setItem('tn_token', data.access_token);
-      localStorage.setItem('tn_user', JSON.stringify(data.user));
+      const token = data.session.access_token;
+
+      // 2. Fetch/Provision user profile from public backend using the Supabase JWT
+      const response = await fetch(`${API_URL}/auth/profile`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const profileData = await response.json();
+      if (!response.ok) {
+        throw new Error(profileData.detail || 'Failed to fetch user profile');
+      }
+
+      localStorage.setItem('tn_token', token);
+      localStorage.setItem('tn_user', JSON.stringify(profileData));
 
       set({
-        token: data.access_token,
-        user: data.user,
+        token: token,
+        user: profileData,
         isAuthenticated: true,
         loading: false,
       });
-      return data.user;
+      return profileData;
     } catch (err) {
       set({ error: err.message, loading: false });
       throw err;
@@ -76,37 +82,63 @@ export const useAuthStore = create((set, get) => ({
   register: async (fullName, email, phone, password, dob, gender, address, city) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`${API_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      // 1. Sign up with Supabase Auth
+      const { data, error: sbError } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          data: {
+            full_name: fullName,
+            phone: phone,
+            city: city || 'Chennai',
+            address: address,
+            dob: dob,
+            gender: gender,
+          },
         },
-        body: JSON.stringify({
-          full_name: fullName,
-          email: email || null,
-          phone: phone || null,
-          password: password,
-          date_of_birth: dob ? new Date(dob).toISOString() : null,
-          gender: gender || null,
-          address: address || null,
-          city: city || 'Chennai'
-        }),
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.detail || 'Registration failed');
+      if (sbError) {
+        throw new Error(sbError.message);
+      }
+
+      // 2. Also register in the backend database (for immediate seeding/consistency)
+      // This is a backup register call to ensure the record exists in the public DB immediately.
+      try {
+        await fetch(`${API_URL}/auth/register`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            full_name: fullName,
+            email: email || null,
+            phone: phone || null,
+            password: password,
+            date_of_birth: dob ? new Date(dob).toISOString() : null,
+            gender: gender || null,
+            address: address || null,
+            city: city || 'Chennai',
+          }),
+        });
+      } catch (backendErr) {
+        console.warn('Backend sync failed on register (profile will auto-create on login):', backendErr);
       }
 
       set({ loading: false });
-      return data;
+      return data.user;
     } catch (err) {
       set({ error: err.message, loading: false });
       throw err;
     }
   },
 
-  logout: () => {
+  logout: async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.warn('Supabase signOut failed:', err);
+    }
     localStorage.removeItem('tn_token');
     localStorage.removeItem('tn_user');
     set({ token: null, user: null, isAuthenticated: false, error: null });
@@ -136,6 +168,25 @@ export const useAuthStore = create((set, get) => ({
     } catch (err) {
       set({ error: err.message, loading: false });
       throw err;
+    }
+  },
+
+  syncUser: async () => {
+    const { token } = get();
+    if (!token) return;
+    try {
+      const response = await fetch(`${API_URL}/auth/profile`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('tn_user', JSON.stringify(data));
+        set({ user: data });
+      }
+    } catch (err) {
+      console.warn('Failed to sync user profile:', err);
     }
   },
 

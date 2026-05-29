@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
 import { Award, Upload, CheckCircle, AlertCircle, AlertTriangle, Loader2, RefreshCw } from 'lucide-react';
+import { useAuthStore } from '../store/authStore';
 
 export default function BusPass() {
+  const { user } = useAuthStore();
   const [category, setCategory] = useState('student');
   const [passType, setPassType] = useState('monthly');
   const [docType, setDocType] = useState('student_id');
@@ -107,7 +109,18 @@ export default function BusPass() {
             </div>
           )}
 
-          {loading ? (
+          {!user?.aadhaar_verified ? (
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-center space-y-4">
+              <AlertTriangle className="h-10 w-10 text-amber-500 mx-auto animate-pulse" />
+              <div className="space-y-1">
+                <p className="text-sm font-bold text-amber-800">Aadhaar Verification Required</p>
+                <p className="text-xs text-amber-600">A verified Aadhaar card is mandatory to apply for state bus passes.</p>
+              </div>
+              <a href="/profile" className="btn-primary w-full py-2.5 text-xs flex items-center justify-center gap-1.5 font-bold shadow-sm">
+                Verify Aadhaar in Profile
+              </a>
+            </div>
+          ) : loading ? (
             <div className="py-12 flex flex-col items-center justify-center space-y-4 text-center">
               <div className="relative">
                 <Loader2 className="h-10 w-10 text-tn-primary animate-spin" />

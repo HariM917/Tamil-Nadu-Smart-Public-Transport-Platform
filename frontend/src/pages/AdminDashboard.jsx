@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
-import { Users, Bus, Ticket, Award, CheckCircle, XCircle, Search, Eye, Filter } from 'lucide-react';
+import { Users, Bus, Ticket, Award, CheckCircle, XCircle, Search, Eye, Filter, TrendingUp, ShieldAlert, Zap, Users2 } from 'lucide-react';
 import { useToast } from '../components/ToastProvider';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, BarChart, Bar } from 'recharts';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('passes'); // passes, users, buses, analytics
-  const [data, setData] = useState({ passes: [], users: [], buses: [], analytics: null });
+  const [data, setData] = useState({ passes: [], users: [], buses: [], analytics: null, fleetAnalytics: null });
   const [loading, setLoading] = useState(true);
   const toast = useToast();
 
@@ -29,8 +30,11 @@ export default function AdminDashboard() {
         const buses = await apiService.listBuses();
         setData(prev => ({ ...prev, buses }));
       } else if (activeTab === 'analytics') {
-        const analytics = await apiService.adminGetAnalytics();
-        setData(prev => ({ ...prev, analytics }));
+        const [analytics, fleetAnalytics] = await Promise.all([
+          apiService.adminGetAnalytics().catch(() => null),
+          apiService.adminGetFleetAnalytics().catch(() => null)
+        ]);
+        setData(prev => ({ ...prev, analytics, fleetAnalytics }));
       }
     } catch (err) {
       toast.error('Failed to load ' + activeTab);
@@ -218,23 +222,165 @@ export default function AdminDashboard() {
             
             {/* ── ANALYTICS TAB ── */}
             {activeTab === 'analytics' && data.analytics && (
-              <div className="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="glass-panel p-6 border-t-4 border-t-blue-500 rounded-xl">
-                  <div className="text-tn-text-secondary text-xs font-bold uppercase mb-2">Total Users</div>
-                  <div className="text-3xl font-display font-bold text-tn-text">{data.analytics.total_users}</div>
+              <div className="p-6 space-y-8 overflow-y-auto max-h-[75vh]">
+                {/* System KPI Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="glass-panel p-6 border-t-4 border-t-blue-500 rounded-xl shadow-sm flex items-center justify-between">
+                    <div>
+                      <div className="text-tn-text-secondary text-xs font-bold uppercase mb-1">Total Users</div>
+                      <div className="text-3xl font-display font-bold text-tn-text">{data.analytics.total_users}</div>
+                    </div>
+                    <Users2 className="h-10 w-10 text-blue-500/20" />
+                  </div>
+                  <div className="glass-panel p-6 border-t-4 border-t-emerald-500 rounded-xl shadow-sm flex items-center justify-between">
+                    <div>
+                      <div className="text-tn-text-secondary text-xs font-bold uppercase mb-1">Active Passes</div>
+                      <div className="text-3xl font-display font-bold text-tn-text">{data.analytics.total_passes}</div>
+                    </div>
+                    <Award className="h-10 w-10 text-emerald-500/20" />
+                  </div>
+                  <div className="glass-panel p-6 border-t-4 border-t-amber-500 rounded-xl shadow-sm flex items-center justify-between">
+                    <div>
+                      <div className="text-tn-text-secondary text-xs font-bold uppercase mb-1">Total Bookings</div>
+                      <div className="text-3xl font-display font-bold text-tn-text">{data.analytics.total_bookings}</div>
+                    </div>
+                    <Ticket className="h-10 w-10 text-amber-500/20" />
+                  </div>
+                  <div className="glass-panel p-6 border-t-4 border-t-purple-500 rounded-xl shadow-sm flex items-center justify-between">
+                    <div>
+                      <div className="text-tn-text-secondary text-xs font-bold uppercase mb-1">Revenue (Est)</div>
+                      <div className="text-3xl font-display font-bold text-tn-text">₹{(data.analytics.total_revenue || data.analytics.total_bookings * 150).toLocaleString()}</div>
+                    </div>
+                    <Zap className="h-10 w-10 text-purple-500/20" />
+                  </div>
                 </div>
-                <div className="glass-panel p-6 border-t-4 border-t-emerald-500 rounded-xl">
-                  <div className="text-tn-text-secondary text-xs font-bold uppercase mb-2">Total Passes</div>
-                  <div className="text-3xl font-display font-bold text-tn-text">{data.analytics.total_passes}</div>
-                </div>
-                <div className="glass-panel p-6 border-t-4 border-t-amber-500 rounded-xl">
-                  <div className="text-tn-text-secondary text-xs font-bold uppercase mb-2">Total Bookings</div>
-                  <div className="text-3xl font-display font-bold text-tn-text">{data.analytics.total_bookings}</div>
-                </div>
-                <div className="glass-panel p-6 border-t-4 border-t-purple-500 rounded-xl">
-                  <div className="text-tn-text-secondary text-xs font-bold uppercase mb-2">Revenue (Est)</div>
-                  <div className="text-3xl font-display font-bold text-tn-text">₹{(data.analytics.total_bookings * 150).toLocaleString()}</div>
-                </div>
+
+                {/* Fleet Historical Analytics (dataset.csv) */}
+                {data.fleetAnalytics && data.fleetAnalytics.by_year && (
+                  <div className="space-y-6">
+                    <div className="border-t border-slate-100 pt-6">
+                      <h3 className="text-base font-bold text-tn-primary font-display flex items-center gap-2 mb-1">
+                        <TrendingUp className="h-5 w-5" />
+                        State Bus Fleet Analytics (dataset.csv)
+                      </h3>
+                      <p className="text-xs text-tn-text-muted">Historical operational performance and audit logs from Chennai transit dataset.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Chart 1: Passenger Traffic */}
+                      <div className="glass-panel p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+                        <h4 className="text-xs font-bold text-tn-text uppercase tracking-wider">Passenger Volume (Lakhs/Day)</h4>
+                        <div className="h-64">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={data.fleetAnalytics.by_year} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                              <defs>
+                                <linearGradient id="colorPassengers" x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="5%" stopColor="#059669" stopOpacity={0.8}/>
+                                  <stop offset="95%" stopColor="#059669" stopOpacity={0}/>
+                                </linearGradient>
+                              </defs>
+                              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                              <XAxis dataKey="year" stroke="#94a3b8" fontSize={10} tickLine={false} />
+                              <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} />
+                              <Tooltip contentStyle={{ fontSize: '11px', borderRadius: '8px' }} />
+                              <Area type="monotone" dataKey="passengers_lakhs_day" stroke="#059669" fillOpacity={1} fill="url(#colorPassengers)" name="Passengers (Lakhs)" />
+                            </AreaChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </div>
+
+                      {/* Chart 2: Fleet Size vs Utilization */}
+                      <div className="glass-panel p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+                        <h4 className="text-xs font-bold text-tn-text uppercase tracking-wider">Fleet Size & Utilization</h4>
+                        <div className="h-64">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={data.fleetAnalytics.by_year} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                              <XAxis dataKey="year" stroke="#94a3b8" fontSize={10} tickLine={false} />
+                              <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} />
+                              <Tooltip contentStyle={{ fontSize: '11px', borderRadius: '8px' }} />
+                              <Legend wrapperStyle={{ fontSize: '10px' }} />
+                              <Bar dataKey="total_fleet" fill="#3b82f6" name="Total Fleet" radius={[4, 4, 0, 0]} />
+                              <Bar dataKey="fleet_utilization_pct" fill="#10b981" name="Utilization %" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </div>
+
+                      {/* Chart 3: Breakdowns & Accidents */}
+                      <div className="glass-panel p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+                        <h4 className="text-xs font-bold text-tn-text uppercase tracking-wider flex items-center gap-1.5">
+                          <ShieldAlert className="h-4 w-4 text-rose-500" />
+                          Breakdowns & Accidents (Rate per Unit)
+                        </h4>
+                        <div className="h-64">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={data.fleetAnalytics.by_year} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                              <XAxis dataKey="year" stroke="#94a3b8" fontSize={10} tickLine={false} />
+                              <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} />
+                              <Tooltip contentStyle={{ fontSize: '11px', borderRadius: '8px' }} />
+                              <Legend wrapperStyle={{ fontSize: '10px' }} />
+                              <Line type="monotone" dataKey="breakdowns" stroke="#f43f5e" strokeWidth={2} name="Total Breakdowns" dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                              <Line type="monotone" dataKey="accidents_per_100k" stroke="#ea580c" strokeWidth={2} name="Accidents/100k km" dot={{ r: 4 }} />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </div>
+
+                      {/* Chart 4: Efficiency & Occupancy */}
+                      <div className="glass-panel p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+                        <h4 className="text-xs font-bold text-tn-text uppercase tracking-wider">Efficiency & Occupancy %</h4>
+                        <div className="h-64">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={data.fleetAnalytics.by_year} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                              <XAxis dataKey="year" stroke="#94a3b8" fontSize={10} tickLine={false} />
+                              <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} />
+                              <Tooltip contentStyle={{ fontSize: '11px', borderRadius: '8px' }} />
+                              <Legend wrapperStyle={{ fontSize: '10px' }} />
+                              <Bar dataKey="km_efficiency_pct" fill="#6366f1" name="KM Efficiency %" radius={[4, 4, 0, 0]} />
+                              <Bar dataKey="occupancy_pct" fill="#ec4899" name="Occupancy %" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Tabular Dataset Representation */}
+                    <div className="glass-panel rounded-2xl border border-slate-100 shadow-sm overflow-hidden mt-6">
+                      <div className="px-5 py-4 border-b border-slate-100 bg-slate-50">
+                        <h4 className="text-xs font-bold text-tn-text uppercase tracking-wider">Complete Performance Dataset Table</h4>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse text-xs">
+                          <thead>
+                            <tr className="bg-slate-100 text-tn-text font-bold border-b border-slate-200">
+                              <th className="p-3">Performance Indicator</th>
+                              {years.map(yr => (
+                                <th key={yr} className="p-3 text-center">{yr}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {data.fleetAnalytics.by_item.map((item, idx) => (
+                              <tr key={idx} className="border-b border-slate-100 hover:bg-slate-50">
+                                <td className="p-3 font-medium text-tn-text">{item.item}</td>
+                                {years.map(yr => (
+                                  <td key={yr} className="p-3 text-center font-mono text-tn-text-secondary">
+                                    {typeof item.values[yr] === 'number' && item.values[yr] > 1000 
+                                      ? item.values[yr].toLocaleString() 
+                                      : item.values[yr]}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

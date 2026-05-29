@@ -15,6 +15,8 @@ class Settings(BaseSettings):
 
     # Database
     DATABASE_URL: str = "postgresql://tn_admin:tn_secure_pass_2024@localhost:5432/tn_transport"
+    SUPABASE_URL: str = "https://fuobtxijlpjlwikakkro.supabase.co"
+    SUPABASE_ANON_KEY: str = ""
 
     # JWT — IMPORTANT: Override SECRET_KEY in production via environment variable
     SECRET_KEY: str = "tn-transport-dev-secret-key-2024-change-in-production"

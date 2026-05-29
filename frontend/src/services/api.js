@@ -183,4 +183,28 @@ export const apiService = {
     }
     return true;
   },
+
+  verifyAadhaar: async (aadhaarNumber, file) => {
+    const token = localStorage.getItem('tn_token');
+    const headers = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const formData = new FormData();
+    formData.append('aadhaar_number', aadhaarNumber);
+    formData.append('file', file);
+
+    const response = await fetch(`${API_URL}/auth/verify-aadhaar`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Aadhaar verification failed');
+    return data;
+  },
+
+  adminGetFleetAnalytics: () =>
+    apiRequest(`${API_URL}/admin/fleet-analytics`, { headers: getHeaders() }),
 };

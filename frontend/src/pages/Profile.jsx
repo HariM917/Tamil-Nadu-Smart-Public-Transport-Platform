@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { User, Mail, Phone, Calendar, Loader2, Save, MapPin } from 'lucide-react';
+import { User, Mail, Phone, Calendar, Loader2, Save, MapPin, CheckCircle, AlertCircle, Upload, ShieldAlert } from 'lucide-react';
 import { useToast } from '../components/ToastProvider';
+import { apiService } from '../services/api';
 
 export default function Profile() {
-  const { user, updateProfile, loading } = useAuthStore();
+  const { user, updateProfile, loading, syncUser } = useAuthStore();
   const toast = useToast();
   
   const [formData, setFormData] = useState({
@@ -17,6 +18,11 @@ export default function Profile() {
     city: user?.city || '',
   });
 
+  const [aadhaarNumber, setAadhaarNumber] = useState('');
+  const [aadhaarFile, setAadhaarFile] = useState(null);
+  const [verifyingAadhaar, setVerifyingAadhaar] = useState(false);
+  const [aadhaarError, setAadhaarError] = useState('');
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -28,6 +34,35 @@ export default function Profile() {
       toast.success('Profile updated successfully');
     } catch (err) {
       toast.error(err.message || 'Failed to update profile');
+    }
+  };
+
+  const handleAadhaarVerify = async (e) => {
+    e.preventDefault();
+    if (!aadhaarNumber || !aadhaarFile) {
+      setAadhaarError('Please enter your 12-digit Aadhaar number and upload your card scan.');
+      return;
+    }
+    const cleanNum = aadhaarNumber.replace(/\s+/g, '');
+    if (cleanNum.length !== 12 || !/^\d+$/.test(cleanNum)) {
+      setAadhaarError('Aadhaar number must be exactly 12 digits.');
+      return;
+    }
+    
+    setVerifyingAadhaar(true);
+    setAadhaarError('');
+    
+    try {
+      await apiService.verifyAadhaar(cleanNum, aadhaarFile);
+      toast.success('Aadhaar verified successfully!');
+      setAadhaarNumber('');
+      setAadhaarFile(null);
+      await syncUser();
+    } catch (err) {
+      setAadhaarError(err.message || 'Verification failed. Please try again.');
+      toast.error(err.message || 'Verification failed.');
+    } finally {
+      setVerifyingAadhaar(false);
     }
   };
 
@@ -55,6 +90,97 @@ export default function Profile() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Aadhaar Verification Section */}
+      <div className="glass-panel p-8 rounded-3xl animate-fade-in-up" style={{ animationDelay: '0.05s' }}>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-display font-bold text-lg text-tn-text">Aadhaar Verification</h2>
+          {user?.aadhaar_verified ? (
+            <span className="badge badge-success flex items-center gap-1">
+              <CheckCircle className="h-3 w-3" /> Verified
+            </span>
+          ) : (
+            <span className="badge badge-warning">Not Verified</span>
+          )}
+        </div>
+
+        {user?.aadhaar_verified ? (
+          <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4 text-emerald-800">
+            <CheckCircle className="h-10 w-10 text-emerald-600 flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm">Your Aadhaar has been verified successfully!</p>
+              <p className="text-xs text-emerald-600 mt-1">Verified Aadhaar: <span className="font-mono font-bold">XXXX XXXX {user.aadhaar_number?.slice(-4)}</span></p>
+              <p className="text-xs text-emerald-500 mt-0.5 font-medium">You are now eligible to book all categories of digital bus passes.</p>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleAadhaarVerify} className="space-y-5">
+            {aadhaarError && (
+              <div className="alert alert-error">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <span className="text-xs">{aadhaarError}</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className="form-label">12-Digit Aadhaar Number</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="XXXX XXXX XXXX"
+                    value={aadhaarNumber}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '').slice(0, 12);
+                      const formatted = val.replace(/(\d{4})(?=\d)/g, '$1 ');
+                      setAadhaarNumber(formatted);
+                    }}
+                    className="form-input"
+                    required
+                  />
+                  <ShieldAlert className="absolute left-3 top-3.5 h-4 w-4 text-tn-text-muted" />
+                </div>
+              </div>
+
+              <div>
+                <label className="form-label">Upload Aadhaar Document Image</label>
+                <div className="flex items-center gap-4">
+                  <label className="flex-grow flex items-center justify-center px-4 py-3 border-2 border-dashed border-slate-200 rounded-xl hover:border-tn-primary/50 transition-colors cursor-pointer text-center text-xs text-tn-text-secondary font-medium">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setAadhaarFile(e.target.files[0])}
+                      className="hidden"
+                      required
+                    />
+                    {aadhaarFile ? `✓ ${aadhaarFile.name}` : 'Select image file...'}
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                type="submit"
+                disabled={verifyingAadhaar}
+                className="btn-primary"
+              >
+                {verifyingAadhaar ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Processing OCR...</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4" />
+                    <span>Verify Aadhaar</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
 
       {/* Edit Profile Form */}

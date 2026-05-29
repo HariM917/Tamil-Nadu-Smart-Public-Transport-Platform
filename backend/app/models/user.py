@@ -20,12 +20,14 @@ class User(Base):
     city = Column(String(100), nullable=True, default="Chennai")
     role = Column(String(20), nullable=False, default="user")  # user, admin
     is_verified = Column(Boolean, default=False)
+    aadhaar_number = Column(String(12), nullable=True, unique=True)
+    aadhaar_verified = Column(Boolean, default=False)
     profile_image = Column(String(500), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    bus_passes = relationship("BusPass", back_populates="user", lazy="dynamic")
+    bus_passes = relationship("BusPass", back_populates="user", lazy="dynamic", foreign_keys="[BusPass.user_id]")
     bookings = relationship("Booking", back_populates="user", lazy="dynamic")
 
     def __repr__(self):
