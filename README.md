@@ -1,228 +1,463 @@
-# 🚌 Tamil Nadu Smart Public Transport Platform
+# 🚌 MobiTN - AI Powered Smart Public Transport Platform
 
-A production-ready, AI-augmented transit platform built for Tamil Nadu. The system operates as a unified platform supporting both a responsive Web Application and an Expo Mobile App, managed by an intelligent FastAPI backend.
+MobiTN is a next-generation smart mobility platform designed for Tamil Nadu. The platform modernizes public transportation services through AI-powered verification, digital bus passes, route intelligence, ticket booking, real-time transit information, and administrative analytics.
+
+The system is designed to serve both commuters and transport authorities through a unified Web and Mobile ecosystem.
 
 ---
 
-## 🏛️ System Architecture
+# 🎯 Vision
+
+To create a unified digital ecosystem for Tamil Nadu public transportation that improves accessibility, transparency, efficiency, and citizen experience using Artificial Intelligence, automation, and smart mobility technologies.
+
+---
+
+# 🏛️ System Architecture
 
 ```mermaid
 graph TD
-    subgraph Clients
-        Web[React Web App - Vite + Tailwind]
-        Mobile[Mobile App - React Native + Expo]
-    end
 
-    subgraph API Gateway / Backend
-        App[FastAPI Core Server]
-        Auth[JWT Authentication Service]
-        Tracker[Simulated GPS Tracking Engine]
-        Booking[Booking & Seat Manager]
-    end
+    User[Passenger]
+    Admin[Transport Officer]
 
-    subgraph AI/ML Engine
-        OCR[Tesseract OCR Document Scanner]
-        ML[Scikit-learn Eligibility Pipeline]
-        Fraud[Jaccard Similarity Fraud Detector]
-    end
+    User --> Frontend
+    Admin --> Frontend
 
-    subgraph Database
-        DB[(PostgreSQL Database)]
-    end
+    Frontend[React Web App]
+    Mobile[React Native App]
 
-    Web -->|REST APIs| App
-    Mobile -->|REST APIs| App
-    App --> Auth
-    App --> Tracker
-    App --> Booking
-    App --> OCR
-    App --> ML
-    App --> Fraud
-    App --> DB
+    Frontend --> Backend
+    Mobile --> Backend
+
+    Backend[FastAPI Backend]
+
+    Backend --> Auth
+    Backend --> Pass
+    Backend --> Booking
+    Backend --> Tracking
+    Backend --> Chatbot
+    Backend --> AI
+
+    Auth[Authentication Service]
+    Pass[Bus Pass Service]
+    Booking[Ticket Booking Service]
+    Tracking[Tracking Service]
+    Chatbot[AI Assistant]
+    AI[OCR & Verification Engine]
+
+    Backend --> DB[(PostgreSQL)]
+
+    AI --> OCR[Tesseract OCR]
+    AI --> Fraud[Fraud Detection]
+    AI --> Verify[Eligibility Verification]
 ```
 
 ---
 
-## 🚀 Core Features
+# 🚀 Core Features
 
-1. **User Authentication**: Secure JWT-token authentication supporting registration and sign-in via email/phone.
-2. **Online Bus Pass**: Categorized pass applications (Student, General, Senior Citizen) with image uploading. Student passes are free in Tamil Nadu.
-3. **Machine Learning Pipeline**:
-   - **Document OCR**: Automatically extracts text from uploaded identity documents using Tesseract OCR.
-   - **Eligibility Model**: Evaluates passenger eligibility using a Scikit-learn classifier pipeline based on demographic factors.
-   - **Fraud Detection**: Cross-checks application text with existing records for duplicate submissions using Jaccard Similarity.
-4. **Interactive Bus Tracking**: Simulates real-time GPS coordinates. Panning maps move buses along their routes with dynamic speed and ETA calculations.
-5. **Seat Bookings**: Displays interactive 40-seat grids, blocking booked seats and generating digital QR-code tickets.
-6. **Officer Admin Panel**: Admin tools to review/approve passes, inspect OCR data, manage routes (CRUD), and review analytics dashboards.
+## 1. User Authentication
+
+* JWT Authentication
+* Secure Login & Registration
+* User Profile Management
+* Role Based Access Control
+* Admin and Passenger Accounts
 
 ---
 
-## 🛠️ Tech Stack
+## 2. Smart Bus Pass Management
 
-- **Backend**: FastAPI (Python 3.10+), SQLAlchemy ORM, PostgreSQL database driver.
-- **Frontend Web**: React.js, Tailwind CSS v3, Zustand State Management, Leaflet Maps, Recharts.
-- **Mobile App**: React Native (Expo framework), Custom state-based navigation stack.
-- **Machine Learning**: Scikit-learn (LogisticRegression + StandardScaler pipeline), Tesseract OCR (Pytesseract), Pillow.
-- **Infrastructure**: Docker & Docker Compose.
+### Available Pass Types
 
----
+#### Student Pass
 
-## 💾 Database Schema
+* Monthly Pass
+* Subsidized Fare
+* College Verification Required
 
-The system initializes the following relational database schema under PostgreSQL:
+#### Adult Pass
 
-### `users`
-- `id` (Primary Key): Unique Integer serial
-- `email` / `phone` (Unique Index): Auth identifier
-- `password_hash`: Bcrypt hashed string
-- `full_name`: Passenger name
-- `role`: "user" or "admin" (seeds `admin@tn.gov.in`)
-- `city`: Location (defaults to "Chennai")
+* Monthly Pass
+* Standard Fare
 
-### `bus_passes`
-- `id` (Primary Key)
-- `user_id` (Foreign Key -> `users.id`)
-- `category`: "student", "general", or "senior_citizen"
-- `pass_type`: "monthly", "quarterly", or "annual"
-- `document_url`: Upload path to static image
-- `ocr_extracted_text`: Scanned textual output
-- `ml_eligibility_score`: Scikit-learn eligibility confidence float
-- `fraud_risk_score`: Duplicate similarity float
-- `status`: "pending", "approved", "rejected"
-- `valid_from` / `valid_until`: Date ranges
-- `amount` / `payment_status`: Checkout attributes
-- `qr_code_url` / `qr_code_data`: Base64 PNG scanning block
+#### Senior Citizen Pass
 
-### `buses`
-- `id` (Primary Key)
-- `bus_number` / `bus_name` / `bus_type`
-- `source` / `destination`: Key stations
-- `stops` (JSON): Ordered stops coordinate array
-- `current_lat` / `current_lng`: Real-time telemetry coordinates
-- `current_speed` / `heading`: Simulated velocity and bearing
-- `status`: "idle" or "running"
+* Concession Fare
+* Age Verification Required
 
-### `bookings`
-- `id` (Primary Key)
-- `user_id` (Foreign Key -> `users.id`)
-- `bus_id` (Foreign Key -> `buses.id`)
-- `source` / `destination` / `travel_date`
-- `seat_number`: Comma-separated seat string
-- `amount` / `payment_status`: Sales tracking
+### Features
 
-### `tickets`
-- `id` (Primary Key)
-- `booking_id` (Foreign Key -> `bookings.id`)
-- `qr_data` / `qr_code_url`: Base64 checkout validator
-- `ticket_number`: Unique invoice code
+* Digital Bus Pass Application
+* Aadhaar Verification
+* Document Upload
+* QR Pass Generation
+* Pass Renewal
+* Application Status Tracking
 
 ---
 
-## ⚡ Setup Instructions
+## 3. AI Powered Verification System
 
-### Option A: Running with Docker Compose (Recommended)
+### OCR Processing
 
-1. Make sure you have **Docker** and **Docker Compose** installed on your system.
-2. In the root project directory, spin up all containers:
-   ```bash
-   docker-compose up --build
-   ```
-3. Docker will launch:
-   - **PostgreSQL**: Accessible on port `5432`
-   - **FastAPI Backend**: Accessible on `http://localhost:8000` (API documentation at `http://localhost:8000/docs`)
-   - **React Frontend**: Accessible on `http://localhost:3000`
+Extracts:
 
----
+* Name
+* Date of Birth
+* Aadhaar Details
+* Address Information
 
-### Option B: Local Manual Setup
+using:
 
-If you prefer to run the components directly on your host machine:
+* Tesseract OCR
+* Image Processing Pipeline
 
-#### 1. Database Setup
-- Install PostgreSQL and create a database named `tn_transport`.
-- Set user credentials matching the environment variables:
-  - User: `tn_admin`
-  - Password: `tn_secure_pass_2024`
+### Eligibility Verification
 
-#### 2. Backend Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Create and activate a Python virtual environment:
-   ```bash
-   python -m venv venv
-   # On Windows:
-   venv\Scripts\activate
-   # On macOS/Linux:
-   source venv/bin/activate
-   ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Start the FastAPI server (it automatically seeds initial users and buses on startup!):
-   ```bash
-   uvicorn app.main:app --reload --port 8000
-   ```
+Automatically validates:
 
-#### 3. React Frontend Setup
-1. Navigate to the frontend directory:
-   ```bash
-   cd ../frontend
-   ```
-2. Install npm packages:
-   ```bash
-   npm install
-   ```
-3. Start the dev server:
-   ```bash
-   npm run dev
-   ```
-4. Open `http://localhost:5173` in your browser.
+* Student Eligibility
+* Senior Citizen Eligibility
+* Document Completeness
 
-#### 4. Mobile App Setup (Expo)
-1. Navigate to the mobile directory:
-   ```bash
-   cd ../mobile
-   ```
-2. Start the Expo server:
-   ```bash
-   npx expo start
-   ```
-3. Press `w` to test on web, or scan the QR code using the Expo Go application on a mobile device.
+### Fraud Detection
+
+Detects:
+
+* Duplicate Applications
+* Repeated Aadhaar Usage
+* Suspicious Records
+
+### Verification Score
+
+Each application receives:
+
+* Eligibility Score
+* Fraud Risk Score
+* Verification Status
 
 ---
 
-## 🔐 Demo Credentials
+## 4. Route Information System
 
-The database seeder automatically creates two credentials to test the platform:
+Provides:
 
-| Role | Username / Email | Password |
-|---|---|---|
-| **Admin Officer** | `admin@tn.gov.in` | `admin_password_123` |
-| **Passenger** | `user@gmail.com` | `user1234` |
+* Chennai Route Database
+* Route Search
+* Stop Information
+* Route Details
+* Route Management
+
+Users can search:
+
+```text
+Source → Destination
+```
+
+and receive:
+
+* Available Routes
+* Intermediate Stops
+* Travel Information
+* Estimated Travel Time
 
 ---
 
-## 🧪 Testing Guide & Walkthrough
+## 5. Live Bus Tracking
 
-1. **User Sign In**: Open `http://localhost:5173/login` (or the mobile screen) and sign in using the **Passenger** credential.
-2. **Apply Bus Pass**:
-   - Navigate to **Bus Pass**.
-   - Click "Attach document" and submit.
-   - The UI will display a scan loader showing the real-time AI OCR text extraction, eligibility check, and fraud check running on the backend.
-   - Note: Since the pass is in the *pending* state, sign out and sign in using the **Admin** credential to approve it.
-3. **Admin Review**:
-   - Go to the **Admin Panel** tab.
-   - Under **Pass Applications**, review the OCR results, check the eligibility score, and click **Approve**.
-   - Sign back in as the **Passenger** to view the active pass showing a generated QR code for conductor scanning.
-4. **Ticket Booking**:
-   - Navigate to **Book Tickets**.
-   - Search for the route: Source: `Chennai`, Destination: `Madurai`.
-   - Click the search result, choose seats in the interactive grid, and click "Confirm".
-   - The ticket displays a booking QR ticket immediately.
-5. **Live GPS Bus Tracking**:
-   - Go to **Live Tracking**.
-   - Select the `Route 17D City Service` or `ECR Deluxe Tourer`.
-   - Every 4 seconds, the bus position updates. Watch the vehicle move in real-time along the map coordinates with telemetry data updating.
+Features:
+
+* Google Maps Integration
+* Route Visualization
+* Current Bus Location
+* ETA Display
+* Route Monitoring
+
+Current implementation supports:
+
+* Simulated GPS Tracking
+
+Future roadmap:
+
+* Real GPS Device Integration
+* Government API Integration
+* Driver App Tracking
+
+---
+
+## 6. Ticket Booking System
+
+Users can:
+
+* Search Routes
+* Select Seats
+* Book Tickets
+* View Booking History
+* Download QR Tickets
+
+Features:
+
+* Interactive Seat Selection
+* Booking Confirmation
+* QR Ticket Generation
+
+---
+
+## 7. AI Transport Assistant
+
+Custom-built AI Assistant without external AI APIs.
+
+### Supported Languages
+
+* English
+* Tamil
+
+### Capabilities
+
+* Route Search Assistance
+* Pass Application Help
+* Fare Enquiry
+* Ticket Booking Guidance
+* Bus Tracking Information
+* General Transport Support
+
+### Technologies
+
+* Scikit-Learn
+* TF-IDF
+* Logistic Regression
+* Semantic FAQ Retrieval
+
+No dependency on:
+
+* OpenAI
+* Gemini
+* Claude APIs
+
+---
+
+## 8. Admin Dashboard
+
+Transport officers can:
+
+### Manage Applications
+
+* Approve Passes
+* Reject Passes
+* Review Documents
+
+### Route Management
+
+* Add Routes
+* Update Routes
+* Delete Routes
+
+### Analytics
+
+* Active Passes
+* Passenger Statistics
+* Booking Analytics
+* Route Usage Statistics
+
+---
+
+# 🛠️ Technology Stack
+
+## Backend
+
+* FastAPI
+* Python 3.10+
+* SQLAlchemy
+* PostgreSQL
+* JWT Authentication
+
+## Frontend
+
+* React.js
+* Vite
+* Tailwind CSS
+* Axios
+
+## Mobile
+
+* React Native
+* Expo
+
+## Artificial Intelligence
+
+* Scikit-Learn
+* Tesseract OCR
+* Custom NLP Engine
+
+## Maps
+
+* Google Maps API
+
+## Infrastructure
+
+* Docker
+* Docker Compose
+
+---
+
+# 💾 Database Modules
+
+## Users
+
+Stores:
+
+* User Profile
+* Login Credentials
+* Role Information
+
+## Bus Passes
+
+Stores:
+
+* Pass Type
+* Verification Status
+* Eligibility Score
+* QR Data
+
+## Routes
+
+Stores:
+
+* Route Number
+* Origin
+* Destination
+* Stops
+
+## Buses
+
+Stores:
+
+* Bus Information
+* GPS Data
+* Route Mapping
+
+## Bookings
+
+Stores:
+
+* Ticket Bookings
+* Seat Information
+* Payment Details
+
+---
+
+# 🔐 Security Features
+
+* JWT Authentication
+* Password Hashing
+* Role-Based Access
+* Aadhaar Masking
+* Secure API Access
+* Input Validation
+
+Sensitive Aadhaar information is never stored in plain text.
+
+---
+
+# 📈 Current Development Status
+
+## Completed
+
+* Authentication Module
+* Bus Pass Module
+* OCR Integration
+* Fraud Detection
+* Route Information Module
+* Ticket Booking Module
+* Admin Dashboard
+* QR Code Generation
+* Google Maps Integration
+* AI Assistant
+* Route Management
+
+## In Progress
+
+* Mobile Application
+* Real-Time GPS Integration
+* Demand Prediction
+* Occupancy Prediction
+* Smart Route Recommendation
+
+---
+
+# 🎯 Future Enhancements
+
+## AI Demand Prediction
+
+Predict:
+
+* Peak Hour Traffic
+* Passenger Volume
+* Route Demand
+
+## Smart Route Recommendation
+
+Recommend:
+
+* Best Route
+* Fastest Route
+* Least Crowded Route
+
+## Occupancy Prediction
+
+Estimate:
+
+* Bus Occupancy
+* Seat Availability
+* Peak Travel Periods
+
+## Government Integration
+
+Potential integration with:
+
+* MTC
+* TNSTC
+* SETC
+* CUMTA
+
+subject to approvals and API availability.
+
+---
+
+# 🚀 Setup Instructions
+
+## Backend
+
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+## Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Mobile
+
+```bash
+cd mobile
+npx expo start
+```
+
+---
+
+# 👨‍💻 Developed By
+
+**MobiTN Team**
+
+AI-Powered Smart Mobility Solution for Tamil Nadu
+
+Built using Artificial Intelligence, Machine Learning, OCR, GIS Mapping, and Modern Web Technologies.
