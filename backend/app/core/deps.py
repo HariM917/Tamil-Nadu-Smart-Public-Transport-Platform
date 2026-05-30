@@ -18,17 +18,27 @@ def verify_supabase_token(token: str, supabase_url: str, supabase_anon_key: str)
     """Validate token directly with Supabase Auth API."""
     if not supabase_url or not supabase_anon_key or "anon-key" in supabase_anon_key:
         return None
-    
-    url = f"{supabase_url}/auth/v1/user"
+        
+    # Fast check: if it's a local token, don't even try Supabase
+    try:
+        from jose import jwt
+        unverified = jwt.decode(token, options={"verify_signature": False})
+        if "supabase" not in unverified.get("iss", ""):
+            return None
+    except Exception:
+        pass
+
+    api_url = f"{supabase_url}/auth/v1/user"
     req = urllib.request.Request(
-        url,
+        api_url,
         headers={
             "Authorization": f"Bearer {token}",
             "apikey": supabase_anon_key
         }
     )
+    
     try:
-        with urllib.request.urlopen(req, timeout=5) as response:
+        with urllib.request.urlopen(req, timeout=15) as response:
             if response.status == 200:
                 return json.loads(response.read().decode())
     except Exception as e:

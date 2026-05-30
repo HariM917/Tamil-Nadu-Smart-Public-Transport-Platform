@@ -1,9 +1,8 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15-alpine
     container_name: tn_transport_db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-tn_admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tn_secure_pass_2024}
@@ -25,6 +24,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: tn_transport_backend
+    restart: unless-stopped
     env_file:
       - ./backend/.env
     ports:
@@ -43,6 +43,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: tn_transport_frontend
+    restart: unless-stopped
     ports:
       - "3000:80"
     depends_on:

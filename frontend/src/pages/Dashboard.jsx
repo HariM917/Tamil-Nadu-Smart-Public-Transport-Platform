@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { apiService } from '../services/api';
-import { Award, Ticket, MapPin, ArrowRight, CheckCircle, Calendar } from 'lucide-react';
+import { Award, Ticket, MapPin, ArrowRight, CheckCircle, Calendar, IndianRupee } from 'lucide-react';
 
 export default function Dashboard() {
   const { user } = useAuthStore();
@@ -50,6 +50,13 @@ export default function Dashboard() {
       path: '/tracking',
       iconBg: 'bg-amber-50 text-amber-600 border-amber-100',
     },
+    {
+      title: 'View Bus Fares',
+      description: 'Check the latest stage-wise ticket prices for all MTC bus services.',
+      icon: IndianRupee,
+      path: '/fares',
+      iconBg: 'bg-purple-50 text-purple-600 border-purple-100',
+    },
   ];
 
   return (
@@ -73,7 +80,7 @@ export default function Dashboard() {
       </div>
 
       {/* Action Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {actionCards.map((card, idx) => (
           <Link
             key={idx}

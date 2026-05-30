@@ -20,20 +20,23 @@ build/
 dist/
 .next/
 
-# Environment
+# Environment (NEVER commit secrets)
 .env
 .env.local
 .env.production
+.env.*.local
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*.code-workspace
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # Uploads
 uploads/
@@ -46,3 +49,14 @@ postgres_data/
 htmlcov/
 .coverage
 coverage/
+
+# Gemini AI
+.gemini/
+
+# Development-only scripts
+backend/add_routes.py
+backend/app/db/geocode_stops.py
+
+# Reference documents (stored in docs/)
+# *.pdf
+# *.xlsx

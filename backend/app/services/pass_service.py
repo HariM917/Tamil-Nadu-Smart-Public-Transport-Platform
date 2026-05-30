@@ -22,15 +22,45 @@ logger = logging.getLogger(__name__)
 
 # Monthly base fares (INR) — Student ₹200, Adult (general) ₹1000, Senior ₹500
 PASS_PRICING: Dict[str, Dict[str, float]] = {
-    "student": {"monthly": 200.0, "quarterly": 500.0, "annual": 1800.0},
-    "general": {"monthly": 1000.0, "quarterly": 2500.0, "annual": 9000.0},
-    "senior_citizen": {"monthly": 500.0, "quarterly": 1250.0, "annual": 4500.0},
+    "school_student": {"monthly": 0.0, "quarterly": 0.0, "annual": 0.0},
+    "college_student": {
+        "stage_2": 120.0,
+        "stage_3": 140.0,
+        "stage_4": 160.0,
+        "stage_5": 180.0,
+        "stage_6": 200.0,
+        "stage_7": 220.0,
+        "stage_8": 240.0,
+        "stage_9": 260.0,
+        "stage_10": 280.0,
+    },
+    "general": {
+        "stage_3": 320.0, "stage_4": 320.0,
+        "stage_5": 370.0,
+        "stage_6": 410.0, "stage_7": 410.0,
+        "stage_8": 450.0, "stage_9": 450.0,
+        "stage_10": 500.0, "stage_11": 500.0,
+        "stage_12": 540.0,
+        "stage_13": 590.0, "stage_14": 590.0, "stage_15": 590.0, "stage_16": 590.0, "stage_17": 590.0,
+        "stage_18": 630.0, "stage_19": 630.0, "stage_20": 630.0,
+        "stage_21": 670.0, "stage_22": 670.0, "stage_23": 670.0,
+    },
+    "senior_citizen": {"monthly": 0.0, "quarterly": 0.0, "annual": 0.0},
+    "press_reporter": {"monthly": 0.0, "quarterly": 0.0, "annual": 0.0},
+    "differently_abled": {"monthly": 0.0, "quarterly": 0.0, "annual": 0.0},
+    "visually_impaired": {"monthly": 0.0, "quarterly": 0.0, "annual": 0.0},
+    "freedom_fighter": {"monthly": 0.0, "quarterly": 0.0, "annual": 0.0},
 }
 
 PASS_TYPE_LABELS = {
-    "student": {"label": "Student Pass", "emoji": "🎓", "monthly_inr": 200},
-    "general": {"label": "Adult Pass", "emoji": "👤", "monthly_inr": 1000},
-    "senior_citizen": {"label": "Senior Citizen Pass", "emoji": "🧓", "monthly_inr": 500},
+    "school_student": {"label": "School Student (Free)", "emoji": "🎒", "monthly_inr": 0},
+    "college_student": {"label": "College Student (50%)", "emoji": "🎓", "monthly_inr": 120},
+    "general": {"label": "Adult MST Pass", "emoji": "👤", "monthly_inr": 320},
+    "senior_citizen": {"label": "Senior Citizen Pass (Free)", "emoji": "🧓", "monthly_inr": 0},
+    "press_reporter": {"label": "Press Reporter (Free)", "emoji": "🗞️", "monthly_inr": 0},
+    "differently_abled": {"label": "Differently Abled (Free)", "emoji": "♿", "monthly_inr": 0},
+    "visually_impaired": {"label": "Visually Impaired (Free)", "emoji": "🦯", "monthly_inr": 0},
+    "freedom_fighter": {"label": "Freedom Fighter / Scholar (Free)", "emoji": "🏅", "monthly_inr": 0},
 }
 
 VERIFICATION_AUTO_APPROVE_THRESHOLD = 70.0
@@ -100,7 +130,12 @@ class PassService:
         aadhaar_file: UploadFile,
         full_name: Optional[str] = None,
         form_dob: Optional[str] = None,
+        gender: Optional[str] = None,
+        phone: Optional[str] = None,
+        issuing_point: Optional[str] = None,
         aadhaar_last4: Optional[str] = None,
+        ration_card_number: Optional[str] = None,
+        extra_details: Optional[str] = None,
         college_id_file: Optional[UploadFile] = None,
         bonafide_file: Optional[UploadFile] = None,
     ) -> BusPass:
@@ -113,24 +148,41 @@ class PassService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid pass category.",
             )
-        if pass_type not in ("monthly", "quarterly", "annual"):
+        valid_types = ["monthly", "quarterly", "annual"] + [f"stage_{i}" for i in range(2, 24)]
+        if pass_type not in valid_types:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="pass_type must be monthly, quarterly, or annual.",
+                detail="Invalid pass_type provided.",
             )
 
         aadhaar_url, aadhaar_path = PassService._save_upload(aadhaar_file, prefix="aadhaar_")
         college_url = None
         bonafide_url = None
 
-        if category == "student":
-            if not college_id_file or not bonafide_file:
+        if category in ("school_student", "college_student", "press_reporter", "differently_abled", "visually_impaired", "freedom_fighter"):
+            if category == "press_reporter" and not college_id_file:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Student pass requires College ID and Bonafide Certificate uploads.",
+                    detail="Press Reporter pass requires Accreditation ID upload.",
                 )
-            college_url, college_path = PassService._save_upload(college_id_file, prefix="college_")
-            bonafide_url, bonafide_path = PassService._save_upload(bonafide_file, prefix="bonafide_")
+            elif category in ("differently_abled", "visually_impaired") and not college_id_file:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Disability pass requires Disability Certificate upload.",
+                )
+            elif category == "freedom_fighter" and not college_id_file:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Freedom Fighter pass requires Pension/Financial Assistance Certificate upload.",
+                )
+            elif category not in ("press_reporter", "differently_abled", "visually_impaired", "freedom_fighter") and (not college_id_file or not bonafide_file):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Student pass requires Institution ID and Bonafide Certificate uploads.",
+                )
+            college_url, college_path = PassService._save_upload(college_id_file, prefix="institution_")
+            if bonafide_file:
+                bonafide_url, bonafide_path = PassService._save_upload(bonafide_file, prefix="bonafide_")
         else:
             college_path = None
             bonafide_path = None
@@ -142,15 +194,22 @@ class PassService:
         college_ocr_details = {}
         bonafide_details = {}
         bonafide_text = ""
-        if category == "student":
+        if category in ("school_student", "college_student", "press_reporter", "differently_abled", "visually_impaired", "freedom_fighter"):
             college_text = ocr_processor.extract_text(college_path)
             college_ocr_details = ocr_processor.parse_extracted_text(college_text)
-            bonafide_text = ocr_processor.extract_text(bonafide_path)
-            bonafide_details = ocr_processor.parse_extracted_text(bonafide_text)
+            if bonafide_path:
+                bonafide_text = ocr_processor.extract_text(bonafide_path)
+                bonafide_details = ocr_processor.parse_extracted_text(bonafide_text)
 
         form_details = {
             "full_name": full_name or user.full_name,
+            "form_dob": form_dob,
+            "gender": gender,
+            "phone": phone or user.phone,
+            "issuing_point": issuing_point,
             "aadhaar_last4": aadhaar_last4 or last4(user.aadhaar_number),
+            "ration_card_number": ration_card_number,
+            "extra_details": json.loads(extra_details) if extra_details else {},
         }
 
         cross_val = fraud_detector.cross_validate_details(
@@ -158,9 +217,9 @@ class PassService:
             user=user,
             category=category,
             ocr_details=ocr_details,
-            bonafide_details=bonafide_details if category == "student" else None,
+            bonafide_details=bonafide_details if category in ("school_student", "college_student") else None,
             form_details=form_details,
-            college_ocr_details=college_ocr_details if category == "student" else None,
+            college_ocr_details=college_ocr_details if category in ("school_student", "college_student", "press_reporter", "differently_abled", "visually_impaired", "freedom_fighter") else None,
         )
 
         age = 25
@@ -178,11 +237,14 @@ class PassService:
                     f"Age Verification Failed: Senior pass requires age 60+ (profile: {age})."
                 )
 
-        is_student = category == "student"
+        is_student = category in ("school_student", "college_student")
+        is_press = category == "press_reporter"
+        is_disabled = category in ("differently_abled", "visually_impaired")
+        is_freedom = category == "freedom_fighter"
         is_eligible, ml_score = eligibility_model.predict_eligibility(
             age=age,
-            is_student=is_student,
-            monthly_income=15000.0 if is_student else 45000.0,
+            is_student=is_student or is_press or is_disabled or is_freedom,
+            monthly_income=15000.0 if (is_student or is_press or is_disabled or is_freedom) else 45000.0,
             distance_km=12.0,
         )
 

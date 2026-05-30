@@ -1,15 +1,29 @@
-fastapi>=0.100.0
-uvicorn>=0.22.0
-sqlalchemy>=2.0.0
-psycopg2-binary>=2.9.6
-pydantic>=2.0.0
-pydantic-settings>=2.0.0
-python-jose[cryptography]>=3.3.0
-passlib[bcrypt]>=1.7.4
-python-multipart>=0.0.6
-qrcode>=7.4.2
-pillow>=9.5.0
-scikit-learn>=1.2.0
-pytesseract>=0.3.10
-numpy>=1.24.0
-email-validator>=2.0.0
+# Core Framework
+fastapi==0.115.0
+uvicorn==0.30.6
+gunicorn==23.0.0
+
+# Database
+sqlalchemy==2.0.32
+psycopg2-binary==2.9.9
+
+# Data Validation
+pydantic==2.8.2
+pydantic-settings==2.4.0
+email-validator==2.3.0
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# File Uploads
+python-multipart==0.0.9
+
+# Image Processing & OCR
+qrcode==8.2
+pillow==11.3.0
+pytesseract==0.3.13
+
+# Machine Learning (AI Chatbot & Verification)
+scikit-learn==1.5.1
+numpy==1.26.4

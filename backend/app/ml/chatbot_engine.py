@@ -13,7 +13,7 @@ KNOWLEDGE_BASE = [
     {
         "category": "pass_rules",
         "question": "How do I apply for a student bus pass?",
-        "answer": "To apply for a student pass (₹200/month), open Bus Pass, select Student Pass, fill the form, upload Aadhaar for OCR, then College ID and Bonafide. If verification score is ≥70%, pay online and receive your QR digital pass."
+        "answer": "To apply for a student pass (Free for School, 50% for College), open Bus Pass, select Student Pass, fill the institution details (School Code, Class), your commute details (Fare, Bus Stops), and upload Aadhaar for OCR and ID/Bonafide. Pick your preferred Issuing Point (out of 29 locations) and submit."
     },
     {
         "category": "pass_rules",
@@ -33,7 +33,7 @@ KNOWLEDGE_BASE = [
     {
         "category": "concession_rules",
         "question": "Who is eligible for senior citizen concessions?",
-        "answer": "Senior citizens aged 60 and above are eligible for travel concessions. They can travel free in ordinary town services in Tamil Nadu (using tokens) or purchase subsidized passes by uploading their age proof document (Aadhaar)."
+        "answer": "Senior citizens aged 60+ living in Chennai can apply for a FREE Bus Pass (Tokens). Apply online by entering your Ration Card Number (for address proof), and Aadhaar for age verification. Select your preferred Issuing Point from 29 locations to collect your physical pass."
     },
     {
         "category": "concession_rules",
@@ -43,7 +43,7 @@ KNOWLEDGE_BASE = [
     {
         "category": "fare_rules",
         "question": "What is the bus ticket fare structure?",
-        "answer": "The ticket fare starts at a base rate of ₹10 for ordinary city buses, ₹15 for Express, ₹18 for Deluxe, and ₹25 for Air Conditioned services. A kilometer fare rate ranging from ₹1.2 to ₹2.0/km is added depending on service class."
+        "answer": "The ticket fare starts at ₹5 for ordinary city buses (Stage 1) up to ₹24 for Stage 30. You can view the complete stage-wise 'Bus Fares' table by clicking on the 'FARE LIST' link in the Route Info page! For special Chennai Ula passes, it is ₹50/day (Vintage) or ₹100/day (A/C)."
     },
     {
         "category": "fare_rules",
@@ -59,6 +59,21 @@ KNOWLEDGE_BASE = [
         "category": "support",
         "question": "வாடிக்கையாளர் சேவை எண் என்ன?",
         "answer": "ஏதேனும் உதவிகளுக்கு, MTC வாடிக்கையாளர் சேவை எண்ணை +91-9445030516 தொடர்பு கொள்ளலாம் அல்லது customercare@mtc.tn.gov.in என்ற மின்னஞ்சல் முகவரிக்கு எழுதலாம். அவசர உதவிக்கு 149 என்ற இலவச எண்ணை அழைக்கவும்."
+    },
+    {
+        "category": "concession_rules",
+        "question": "Who is eligible for free student passes?",
+        "answer": "Students studying in Classes I to XII in Govt-recognized schools, and Govt ITIs/Arts/Polytechnic colleges are eligible for free passes. They can travel on all days in ordinary/express/deluxe buses (except AC and night services)."
+    },
+    {
+        "category": "concession_rules",
+        "question": "What is the College Student Concession Ticket?",
+        "answer": "College students get a 50% concession ticket. Passes are valid from the 11th to the 10th of the next month. Renewals happen from the 1st to 13th of every month. Monthly prices vary from ₹120 to ₹280 based on the travel stages."
+    },
+    {
+        "category": "concession_rules",
+        "question": "Where are the student concession pass issuing points?",
+        "answer": "We have 29 MTC issuing points across Chennai, including Adyar, Broadway, CMBT, Guindy, Tambaram, Vadapalani, and Velachery. You can now select your preferred issuing point directly from a dropdown during the online application process for any pass!"
     }
 ]
 
@@ -71,6 +86,9 @@ TRAINING_DATA = [
     ("பஸ் பாஸ் பெறுவது எப்படி", "apply_pass"),
     ("மாணவர் பஸ் பாஸ் அப்ளை செய்ய வேண்டும்", "apply_pass"),
     ("பாஸ் அப்ளை செய்வது எப்படி", "apply_pass"),
+    ("free student bus pass rules", "apply_pass"),
+    ("where are the pass issuing points", "apply_pass"),
+    ("college concession ticket renewal dates", "apply_pass"),
     
     ("where is bus 102", "track_bus"),
     ("track route 101CT location", "track_bus"),

@@ -11,7 +11,7 @@ from app.services.pass_service import pass_service
 
 router = APIRouter()
 
-VALID_CATEGORIES = ["student", "general", "senior_citizen"]
+VALID_CATEGORIES = ["school_student", "college_student", "general", "senior_citizen", "press_reporter", "differently_abled", "visually_impaired", "freedom_fighter"]
 
 
 @router.get("/types", response_model=List[PassTypeInfo])
@@ -34,9 +34,14 @@ def apply_pass(
     category: str = Form(...),
     pass_type: str = Form("monthly"),
     document_type: str = Form("aadhar"),
-    full_name: str = Form(...),
-    form_dob: Optional[str] = Form(None),
-    aadhaar_last4: str = Form(..., min_length=4, max_length=4),
+    full_name: str = Form(None),
+    form_dob: str = Form(None),
+    gender: str = Form(None),
+    phone: str = Form(None),
+    issuing_point: str = Form(None),
+    aadhaar_last4: str = Form(None),
+    ration_card_number: str = Form(None),
+    extra_details: str = Form(None),
     aadhaar_file: UploadFile = File(...),
     college_id_file: UploadFile = File(None),
     bonafide_file: UploadFile = File(None),
@@ -52,11 +57,7 @@ def apply_pass(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Invalid category. Must be one of: {', '.join(VALID_CATEGORIES)}",
         )
-    if not current_user.aadhaar_verified:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Complete Aadhaar verification in your profile before applying.",
-        )
+
 
     return pass_service.apply_for_pass(
         db=db,
@@ -67,7 +68,12 @@ def apply_pass(
         aadhaar_file=aadhaar_file,
         full_name=full_name,
         form_dob=form_dob,
+        gender=gender,
+        phone=phone,
+        issuing_point=issuing_point,
         aadhaar_last4=aadhaar_last4,
+        ration_card_number=ration_card_number,
+        extra_details=extra_details,
         college_id_file=college_id_file,
         bonafide_file=bonafide_file,
     )

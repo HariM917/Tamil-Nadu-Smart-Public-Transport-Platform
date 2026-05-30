@@ -22,6 +22,7 @@ import LiveTracking from './pages/LiveTracking';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
 import RouteInfo from './pages/RouteInfo';
+import Fares from './pages/Fares';
 
 // Route Guards
 function PrivateRoute({ children }) {
@@ -75,6 +76,7 @@ export default function App() {
                 <Route path="/" element={<Landing />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/fares" element={<Fares />} />
 
                 {/* Passenger routes */}
                 <Route

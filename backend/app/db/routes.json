@@ -4,25 +4,101 @@
     "origin": "THIRUVOTRIYUR",
     "destination": "POONAMALLEE",
     "stops": [
-      {"name": "THIRUVOTRIYUR", "lat": 13.1600, "lng": 80.3000},
-      {"name": "THIRUVOTRIYUR TEMPLE", "lat": 13.1550, "lng": 80.2980},
-      {"name": "THANGAL", "lat": 13.1480, "lng": 80.2950},
-      {"name": "ANNA NAGAR", "lat": 13.1400, "lng": 80.2920},
-      {"name": "ROYAPURAM P.S", "lat": 13.1250, "lng": 80.2940},
-      {"name": "CLIVE BATTERY", "lat": 13.1120, "lng": 80.2930},
-      {"name": "PARRYS", "lat": 13.0900, "lng": 80.2900},
-      {"name": "M.G.R.CENTRAL", "lat": 13.0827, "lng": 80.2707},
-      {"name": "DASAPRAKASH", "lat": 13.0810, "lng": 80.2580},
-      {"name": "TAYLORS ROAD", "lat": 13.0790, "lng": 80.2430},
-      {"name": "AMINJIKARAI", "lat": 13.0750, "lng": 80.2260},
-      {"name": "NADUVANKARAI", "lat": 13.0760, "lng": 80.2180},
-      {"name": "ARUMBAKKAM", "lat": 13.0720, "lng": 80.2070},
-      {"name": "NERKUNDRAM", "lat": 13.0690, "lng": 80.1910},
-      {"name": "MADURAVOYAL", "lat": 13.0650, "lng": 80.1700},
-      {"name": "VAANAGARAM", "lat": 13.0620, "lng": 80.1510},
-      {"name": "VELAPPANCHAVADI", "lat": 13.0580, "lng": 80.1380},
-      {"name": "KUMUNANCHAVADI", "lat": 13.0540, "lng": 80.1210},
-      {"name": "POONAMALLEE", "lat": 13.0470, "lng": 80.1000}
+      {
+        "name": "THIRUVOTRIYUR",
+        "lat": 13.16,
+        "lng": 80.3
+      },
+      {
+        "name": "THIRUVOTRIYUR TEMPLE",
+        "lat": 13.155,
+        "lng": 80.298
+      },
+      {
+        "name": "THANGAL",
+        "lat": 13.148,
+        "lng": 80.295
+      },
+      {
+        "name": "ANNA NAGAR",
+        "lat": 13.14,
+        "lng": 80.292
+      },
+      {
+        "name": "ROYAPURAM P.S",
+        "lat": 13.125,
+        "lng": 80.294
+      },
+      {
+        "name": "CLIVE BATTERY",
+        "lat": 13.112,
+        "lng": 80.293
+      },
+      {
+        "name": "PARRYS",
+        "lat": 13.09,
+        "lng": 80.29
+      },
+      {
+        "name": "M.G.R.CENTRAL",
+        "lat": 13.0827,
+        "lng": 80.2707
+      },
+      {
+        "name": "DASAPRAKASH",
+        "lat": 13.081,
+        "lng": 80.258
+      },
+      {
+        "name": "TAYLORS ROAD",
+        "lat": 13.079,
+        "lng": 80.243
+      },
+      {
+        "name": "AMINJIKARAI",
+        "lat": 13.075,
+        "lng": 80.226
+      },
+      {
+        "name": "NADUVANKARAI",
+        "lat": 13.076,
+        "lng": 80.218
+      },
+      {
+        "name": "ARUMBAKKAM",
+        "lat": 13.072,
+        "lng": 80.207
+      },
+      {
+        "name": "NERKUNDRAM",
+        "lat": 13.069,
+        "lng": 80.191
+      },
+      {
+        "name": "MADURAVOYAL",
+        "lat": 13.065,
+        "lng": 80.17
+      },
+      {
+        "name": "VAANAGARAM",
+        "lat": 13.062,
+        "lng": 80.151
+      },
+      {
+        "name": "VELAPPANCHAVADI",
+        "lat": 13.058,
+        "lng": 80.138
+      },
+      {
+        "name": "KUMUNANCHAVADI",
+        "lat": 13.054,
+        "lng": 80.121
+      },
+      {
+        "name": "POONAMALLEE",
+        "lat": 13.047,
+        "lng": 80.1
+      }
     ]
   },
   {
@@ -30,19 +106,71 @@
     "origin": "ROYAPURAM B.S",
     "destination": "POONAMALLEE",
     "stops": [
-      {"name": "ROYAPURAM B.S", "lat": 13.1200, "lng": 80.2950},
-      {"name": "CLIVE BATTERY", "lat": 13.1120, "lng": 80.2930},
-      {"name": "PARRYS", "lat": 13.0900, "lng": 80.2900},
-      {"name": "M.G.R.CENTRAL", "lat": 13.0827, "lng": 80.2707},
-      {"name": "DASAPRAKASH", "lat": 13.0810, "lng": 80.2580},
-      {"name": "AMINJIKARAI", "lat": 13.0750, "lng": 80.2260},
-      {"name": "ARUMBAKKAM", "lat": 13.0720, "lng": 80.2070},
-      {"name": "NERKUNDRAM", "lat": 13.0690, "lng": 80.1910},
-      {"name": "MADURAVOYAL", "lat": 13.0650, "lng": 80.1700},
-      {"name": "VAANAGARAM", "lat": 13.0620, "lng": 80.1510},
-      {"name": "VELAPPANCHAVADI", "lat": 13.0580, "lng": 80.1380},
-      {"name": "KUMUNANCHAVADI", "lat": 13.0540, "lng": 80.1210},
-      {"name": "POONAMALLEE", "lat": 13.0470, "lng": 80.1000}
+      {
+        "name": "ROYAPURAM B.S",
+        "lat": 13.12,
+        "lng": 80.295
+      },
+      {
+        "name": "CLIVE BATTERY",
+        "lat": 13.112,
+        "lng": 80.293
+      },
+      {
+        "name": "PARRYS",
+        "lat": 13.09,
+        "lng": 80.29
+      },
+      {
+        "name": "M.G.R.CENTRAL",
+        "lat": 13.0827,
+        "lng": 80.2707
+      },
+      {
+        "name": "DASAPRAKASH",
+        "lat": 13.081,
+        "lng": 80.258
+      },
+      {
+        "name": "AMINJIKARAI",
+        "lat": 13.075,
+        "lng": 80.226
+      },
+      {
+        "name": "ARUMBAKKAM",
+        "lat": 13.072,
+        "lng": 80.207
+      },
+      {
+        "name": "NERKUNDRAM",
+        "lat": 13.069,
+        "lng": 80.191
+      },
+      {
+        "name": "MADURAVOYAL",
+        "lat": 13.065,
+        "lng": 80.17
+      },
+      {
+        "name": "VAANAGARAM",
+        "lat": 13.062,
+        "lng": 80.151
+      },
+      {
+        "name": "VELAPPANCHAVADI",
+        "lat": 13.058,
+        "lng": 80.138
+      },
+      {
+        "name": "KUMUNANCHAVADI",
+        "lat": 13.054,
+        "lng": 80.121
+      },
+      {
+        "name": "POONAMALLEE",
+        "lat": 13.047,
+        "lng": 80.1
+      }
     ]
   },
   {
@@ -50,24 +178,96 @@
     "origin": "TONDIARPET",
     "destination": "BSNL OFFICE",
     "stops": [
-      {"name": "TONDIARPET", "lat": 13.1310, "lng": 80.2880},
-      {"name": "THANGAL", "lat": 13.1480, "lng": 80.2950},
-      {"name": "ANNA NAGAR", "lat": 13.1400, "lng": 80.2920},
-      {"name": "ROYAPURAM P.S", "lat": 13.1250, "lng": 80.2940},
-      {"name": "CLIVE BATTERY", "lat": 13.1120, "lng": 80.2930},
-      {"name": "PARRYS", "lat": 13.0900, "lng": 80.2900},
-      {"name": "M.G.R.CENTRAL", "lat": 13.0827, "lng": 80.2707},
-      {"name": "DASAPRAKASH", "lat": 13.0810, "lng": 80.2580},
-      {"name": "TAYLORS ROAD", "lat": 13.0790, "lng": 80.2430},
-      {"name": "AMINJIKARAI", "lat": 13.0750, "lng": 80.2260},
-      {"name": "NADUVANKARAI", "lat": 13.0760, "lng": 80.2180},
-      {"name": "ARUMBAKKAM", "lat": 13.0720, "lng": 80.2070},
-      {"name": "NERKUNDRAM", "lat": 13.0690, "lng": 80.1910},
-      {"name": "MADURAVOYAL", "lat": 13.0650, "lng": 80.1700},
-      {"name": "VAANAGARAM", "lat": 13.0620, "lng": 80.1510},
-      {"name": "VELAPPANCHAVADI", "lat": 13.0580, "lng": 80.1380},
-      {"name": "KUMUNANCHAVADI", "lat": 13.0540, "lng": 80.1210},
-      {"name": "BSNL OFFICE", "lat": 13.0500, "lng": 80.1100}
+      {
+        "name": "TONDIARPET",
+        "lat": 13.131,
+        "lng": 80.288
+      },
+      {
+        "name": "THANGAL",
+        "lat": 13.148,
+        "lng": 80.295
+      },
+      {
+        "name": "ANNA NAGAR",
+        "lat": 13.14,
+        "lng": 80.292
+      },
+      {
+        "name": "ROYAPURAM P.S",
+        "lat": 13.125,
+        "lng": 80.294
+      },
+      {
+        "name": "CLIVE BATTERY",
+        "lat": 13.112,
+        "lng": 80.293
+      },
+      {
+        "name": "PARRYS",
+        "lat": 13.09,
+        "lng": 80.29
+      },
+      {
+        "name": "M.G.R.CENTRAL",
+        "lat": 13.0827,
+        "lng": 80.2707
+      },
+      {
+        "name": "DASAPRAKASH",
+        "lat": 13.081,
+        "lng": 80.258
+      },
+      {
+        "name": "TAYLORS ROAD",
+        "lat": 13.079,
+        "lng": 80.243
+      },
+      {
+        "name": "AMINJIKARAI",
+        "lat": 13.075,
+        "lng": 80.226
+      },
+      {
+        "name": "NADUVANKARAI",
+        "lat": 13.076,
+        "lng": 80.218
+      },
+      {
+        "name": "ARUMBAKKAM",
+        "lat": 13.072,
+        "lng": 80.207
+      },
+      {
+        "name": "NERKUNDRAM",
+        "lat": 13.069,
+        "lng": 80.191
+      },
+      {
+        "name": "MADURAVOYAL",
+        "lat": 13.065,
+        "lng": 80.17
+      },
+      {
+        "name": "VAANAGARAM",
+        "lat": 13.062,
+        "lng": 80.151
+      },
+      {
+        "name": "VELAPPANCHAVADI",
+        "lat": 13.058,
+        "lng": 80.138
+      },
+      {
+        "name": "KUMUNANCHAVADI",
+        "lat": 13.054,
+        "lng": 80.121
+      },
+      {
+        "name": "BSNL OFFICE",
+        "lat": 13.05,
+        "lng": 80.11
+      }
     ]
   },
   {
@@ -75,19 +275,71 @@
     "origin": "ROYAPURAM B.S",
     "destination": "THIRUMAZHISAI",
     "stops": [
-      {"name": "ROYAPURAM B.S", "lat": 13.1200, "lng": 80.2950},
-      {"name": "CLIVE BATTERY", "lat": 13.1120, "lng": 80.2930},
-      {"name": "PARRYS", "lat": 13.0900, "lng": 80.2900},
-      {"name": "M.G.R.CENTRAL", "lat": 13.0827, "lng": 80.2707},
-      {"name": "DASAPRAKASH", "lat": 13.0810, "lng": 80.2580},
-      {"name": "AMINJIKARAI", "lat": 13.0750, "lng": 80.2260},
-      {"name": "ARUMBAKKAM", "lat": 13.0720, "lng": 80.2070},
-      {"name": "NERKUNDRAM", "lat": 13.0690, "lng": 80.1910},
-      {"name": "MADURAVOYAL", "lat": 13.0650, "lng": 80.1700},
-      {"name": "VAANAGARAM", "lat": 13.0620, "lng": 80.1510},
-      {"name": "VELAPPANCHAVADI", "lat": 13.0580, "lng": 80.1380},
-      {"name": "KUMUNANCHAVADI", "lat": 13.0540, "lng": 80.1210},
-      {"name": "THIRUMAZHISAI", "lat": 13.0400, "lng": 80.0600}
+      {
+        "name": "ROYAPURAM B.S",
+        "lat": 13.12,
+        "lng": 80.295
+      },
+      {
+        "name": "CLIVE BATTERY",
+        "lat": 13.112,
+        "lng": 80.293
+      },
+      {
+        "name": "PARRYS",
+        "lat": 13.09,
+        "lng": 80.29
+      },
+      {
+        "name": "M.G.R.CENTRAL",
+        "lat": 13.0827,
+        "lng": 80.2707
+      },
+      {
+        "name": "DASAPRAKASH",
+        "lat": 13.081,
+        "lng": 80.258
+      },
+      {
+        "name": "AMINJIKARAI",
+        "lat": 13.075,
+        "lng": 80.226
+      },
+      {
+        "name": "ARUMBAKKAM",
+        "lat": 13.072,
+        "lng": 80.207
+      },
+      {
+        "name": "NERKUNDRAM",
+        "lat": 13.069,
+        "lng": 80.191
+      },
+      {
+        "name": "MADURAVOYAL",
+        "lat": 13.065,
+        "lng": 80.17
+      },
+      {
+        "name": "VAANAGARAM",
+        "lat": 13.062,
+        "lng": 80.151
+      },
+      {
+        "name": "VELAPPANCHAVADI",
+        "lat": 13.058,
+        "lng": 80.138
+      },
+      {
+        "name": "KUMUNANCHAVADI",
+        "lat": 13.054,
+        "lng": 80.121
+      },
+      {
+        "name": "THIRUMAZHISAI",
+        "lat": 13.04,
+        "lng": 80.06
+      }
     ]
   },
   {
@@ -95,24 +347,96 @@
     "origin": "ISLAND GROUND",
     "destination": "KELAMBAKKAM",
     "stops": [
-      {"name": "ISLAND GROUND", "lat": 13.0720, "lng": 80.2800},
-      {"name": "SECRETARIAT", "lat": 13.0840, "lng": 80.2850},
-      {"name": "CHEPAUK", "lat": 13.0650, "lng": 80.2810},
-      {"name": "Q.M.C", "lat": 13.0450, "lng": 80.2780},
-      {"name": "FORESHORE ESTATE", "lat": 13.0250, "lng": 80.2760},
-      {"name": "ADYAR B.S.", "lat": 13.0060, "lng": 80.2580},
-      {"name": "THIRUVANMIYUR", "lat": 12.9860, "lng": 80.2600},
-      {"name": "KANDANCHAVADI", "lat": 12.9650, "lng": 80.2490},
-      {"name": "PERUNGUDI", "lat": 12.9550, "lng": 80.2470},
-      {"name": "THORAIPAKKAM", "lat": 12.9350, "lng": 80.2440},
-      {"name": "METTUKUPPAM", "lat": 12.9200, "lng": 80.2420},
-      {"name": "KARAPAKKAM", "lat": 12.9100, "lng": 80.2410},
-      {"name": "SHOLINGANALLUR", "lat": 12.8900, "lng": 80.2380},
-      {"name": "SEMMANCHERI S.C.B.", "lat": 12.8650, "lng": 80.2310},
-      {"name": "NAVALUR", "lat": 12.8450, "lng": 80.2270},
-      {"name": "SIRUSERI I.T.PARK", "lat": 12.8250, "lng": 80.2220},
-      {"name": "PUDUPAKKAM", "lat": 12.8100, "lng": 80.2200},
-      {"name": "KELAMBAKKAM", "lat": 12.7850, "lng": 80.2230}
+      {
+        "name": "ISLAND GROUND",
+        "lat": 13.072,
+        "lng": 80.28
+      },
+      {
+        "name": "SECRETARIAT",
+        "lat": 13.084,
+        "lng": 80.285
+      },
+      {
+        "name": "CHEPAUK",
+        "lat": 13.065,
+        "lng": 80.281
+      },
+      {
+        "name": "Q.M.C",
+        "lat": 13.045,
+        "lng": 80.278
+      },
+      {
+        "name": "FORESHORE ESTATE",
+        "lat": 13.025,
+        "lng": 80.276
+      },
+      {
+        "name": "ADYAR B.S.",
+        "lat": 13.006,
+        "lng": 80.258
+      },
+      {
+        "name": "THIRUVANMIYUR",
+        "lat": 12.986,
+        "lng": 80.26
+      },
+      {
+        "name": "KANDANCHAVADI",
+        "lat": 12.965,
+        "lng": 80.249
+      },
+      {
+        "name": "PERUNGUDI",
+        "lat": 12.955,
+        "lng": 80.247
+      },
+      {
+        "name": "THORAIPAKKAM",
+        "lat": 12.935,
+        "lng": 80.244
+      },
+      {
+        "name": "METTUKUPPAM",
+        "lat": 12.92,
+        "lng": 80.242
+      },
+      {
+        "name": "KARAPAKKAM",
+        "lat": 12.91,
+        "lng": 80.241
+      },
+      {
+        "name": "SHOLINGANALLUR",
+        "lat": 12.89,
+        "lng": 80.238
+      },
+      {
+        "name": "SEMMANCHERI S.C.B.",
+        "lat": 12.865,
+        "lng": 80.231
+      },
+      {
+        "name": "NAVALUR",
+        "lat": 12.845,
+        "lng": 80.227
+      },
+      {
+        "name": "SIRUSERI I.T.PARK",
+        "lat": 12.825,
+        "lng": 80.222
+      },
+      {
+        "name": "PUDUPAKKAM",
+        "lat": 12.81,
+        "lng": 80.22
+      },
+      {
+        "name": "KELAMBAKKAM",
+        "lat": 12.785,
+        "lng": 80.223
+      }
     ]
   },
   {
@@ -120,15 +444,51 @@
     "origin": "THIRUVANMIYUR",
     "destination": "PUDUPAKKAM/VANDALOOR RD.J",
     "stops": [
-      {"name": "THIRUVANMIYUR", "lat": 12.9860, "lng": 80.2600},
-      {"name": "KANDANCHAVADI", "lat": 12.9650, "lng": 80.2490},
-      {"name": "PERUNGUDI", "lat": 12.9550, "lng": 80.2470},
-      {"name": "THORAIPAKKAM", "lat": 12.9350, "lng": 80.2440},
-      {"name": "SHOLINGANALLUR", "lat": 12.8900, "lng": 80.2380},
-      {"name": "SEMMANCHERI S.C.B.", "lat": 12.8650, "lng": 80.2310},
-      {"name": "NAVALUR", "lat": 12.8450, "lng": 80.2270},
-      {"name": "SIRUSERI I.T.PARK", "lat": 12.8250, "lng": 80.2220},
-      {"name": "PUDUPAKKAM/VANDALOOR RD.J", "lat": 12.8050, "lng": 80.2100}
+      {
+        "name": "THIRUVANMIYUR",
+        "lat": 12.986,
+        "lng": 80.26
+      },
+      {
+        "name": "KANDANCHAVADI",
+        "lat": 12.965,
+        "lng": 80.249
+      },
+      {
+        "name": "PERUNGUDI",
+        "lat": 12.955,
+        "lng": 80.247
+      },
+      {
+        "name": "THORAIPAKKAM",
+        "lat": 12.935,
+        "lng": 80.244
+      },
+      {
+        "name": "SHOLINGANALLUR",
+        "lat": 12.89,
+        "lng": 80.238
+      },
+      {
+        "name": "SEMMANCHERI S.C.B.",
+        "lat": 12.865,
+        "lng": 80.231
+      },
+      {
+        "name": "NAVALUR",
+        "lat": 12.845,
+        "lng": 80.227
+      },
+      {
+        "name": "SIRUSERI I.T.PARK",
+        "lat": 12.825,
+        "lng": 80.222
+      },
+      {
+        "name": "PUDUPAKKAM/VANDALOOR RD.J",
+        "lat": 12.805,
+        "lng": 80.21
+      }
     ]
   },
   {
@@ -136,20 +496,76 @@
     "origin": "ISLAND GROUND",
     "destination": "SEMMANCHERI S.C.B.",
     "stops": [
-      {"name": "ISLAND GROUND", "lat": 13.0720, "lng": 80.2800},
-      {"name": "SECRETARIAT", "lat": 13.0840, "lng": 80.2850},
-      {"name": "CHEPAUK", "lat": 13.0650, "lng": 80.2810},
-      {"name": "Q.M.C", "lat": 13.0450, "lng": 80.2780},
-      {"name": "FORESHORE ESTATE", "lat": 13.0250, "lng": 80.2760},
-      {"name": "ADYAR B.S.", "lat": 13.0060, "lng": 80.2580},
-      {"name": "THIRUVANMIYUR", "lat": 12.9860, "lng": 80.2600},
-      {"name": "KANDANCHAVADI", "lat": 12.9650, "lng": 80.2490},
-      {"name": "PERUNGUDI", "lat": 12.9550, "lng": 80.2470},
-      {"name": "THORAIPAKKAM", "lat": 12.9350, "lng": 80.2440},
-      {"name": "METTUKUPPAM", "lat": 12.9200, "lng": 80.2420},
-      {"name": "KARAPAKKAM", "lat": 12.9100, "lng": 80.2410},
-      {"name": "SHOLINGANALLUR", "lat": 12.8900, "lng": 80.2380},
-      {"name": "SEMMANCHERI S.C.B.", "lat": 12.8650, "lng": 80.2310}
+      {
+        "name": "ISLAND GROUND",
+        "lat": 13.072,
+        "lng": 80.28
+      },
+      {
+        "name": "SECRETARIAT",
+        "lat": 13.084,
+        "lng": 80.285
+      },
+      {
+        "name": "CHEPAUK",
+        "lat": 13.065,
+        "lng": 80.281
+      },
+      {
+        "name": "Q.M.C",
+        "lat": 13.045,
+        "lng": 80.278
+      },
+      {
+        "name": "FORESHORE ESTATE",
+        "lat": 13.025,
+        "lng": 80.276
+      },
+      {
+        "name": "ADYAR B.S.",
+        "lat": 13.006,
+        "lng": 80.258
+      },
+      {
+        "name": "THIRUVANMIYUR",
+        "lat": 12.986,
+        "lng": 80.26
+      },
+      {
+        "name": "KANDANCHAVADI",
+        "lat": 12.965,
+        "lng": 80.249
+      },
+      {
+        "name": "PERUNGUDI",
+        "lat": 12.955,
+        "lng": 80.247
+      },
+      {
+        "name": "THORAIPAKKAM",
+        "lat": 12.935,
+        "lng": 80.244
+      },
+      {
+        "name": "METTUKUPPAM",
+        "lat": 12.92,
+        "lng": 80.242
+      },
+      {
+        "name": "KARAPAKKAM",
+        "lat": 12.91,
+        "lng": 80.241
+      },
+      {
+        "name": "SHOLINGANALLUR",
+        "lat": 12.89,
+        "lng": 80.238
+      },
+      {
+        "name": "SEMMANCHERI S.C.B.",
+        "lat": 12.865,
+        "lng": 80.231
+      }
     ]
   },
   {
@@ -157,14 +573,481 @@
     "origin": "THIRUVANMIYUR",
     "destination": "SIRUSERI I.T.PARK",
     "stops": [
-      {"name": "THIRUVANMIYUR", "lat": 12.9860, "lng": 80.2600},
-      {"name": "KANDANCHAVADI", "lat": 12.9650, "lng": 80.2490},
-      {"name": "PERUNGUDI", "lat": 12.9550, "lng": 80.2470},
-      {"name": "THORAIPAKKAM", "lat": 12.9350, "lng": 80.2440},
-      {"name": "SHOLINGANALLUR", "lat": 12.8900, "lng": 80.2380},
-      {"name": "SEMMANCHERI S.C.B.", "lat": 12.8650, "lng": 80.2310},
-      {"name": "NAVALUR", "lat": 12.8450, "lng": 80.2270},
-      {"name": "SIRUSERI I.T.PARK", "lat": 12.8250, "lng": 80.2220}
+      {
+        "name": "THIRUVANMIYUR",
+        "lat": 12.986,
+        "lng": 80.26
+      },
+      {
+        "name": "KANDANCHAVADI",
+        "lat": 12.965,
+        "lng": 80.249
+      },
+      {
+        "name": "PERUNGUDI",
+        "lat": 12.955,
+        "lng": 80.247
+      },
+      {
+        "name": "THORAIPAKKAM",
+        "lat": 12.935,
+        "lng": 80.244
+      },
+      {
+        "name": "SHOLINGANALLUR",
+        "lat": 12.89,
+        "lng": 80.238
+      },
+      {
+        "name": "SEMMANCHERI S.C.B.",
+        "lat": 12.865,
+        "lng": 80.231
+      },
+      {
+        "name": "NAVALUR",
+        "lat": 12.845,
+        "lng": 80.227
+      },
+      {
+        "name": "SIRUSERI I.T.PARK",
+        "lat": 12.825,
+        "lng": 80.222
+      }
+    ]
+  },
+  {
+    "route_no": "102K",
+    "origin": "ISLAND GROUND",
+    "destination": "KANNAGI NAGAR S.C.B.",
+    "stops": [
+      {
+        "name": "ISLAND GROUND",
+        "lat": 13.0778839,
+        "lng": 80.2780916
+      },
+      {
+        "name": "SECRETARIAT",
+        "lat": 13.0803743,
+        "lng": 80.2883666
+      },
+      {
+        "name": "CHEPAUK",
+        "lat": 13.0645131,
+        "lng": 80.2831179
+      },
+      {
+        "name": "Q.M.C",
+        "lat": 12.9713656,
+        "lng": 80.1856596
+      },
+      {
+        "name": "FORESHORE ESTATE",
+        "lat": 13.0249209,
+        "lng": 80.2776875
+      },
+      {
+        "name": "A.M.S.HOSPITAL",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "ADYAR O.T.",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "INDIRA NAGAR",
+        "lat": 12.9960623,
+        "lng": 80.249716
+      },
+      {
+        "name": "SRP TOOLS",
+        "lat": 12.9794944,
+        "lng": 80.2528353
+      },
+      {
+        "name": "KANDANCHAVADI",
+        "lat": 12.9669208,
+        "lng": 80.2482764
+      },
+      {
+        "name": "THORAPPAKKAM TEA SHOP",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "THORAPPAKKAM P.T.C COLONY",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KANNAGI NAGAR S.C.B.",
+        "lat": 13.0,
+        "lng": 80.0
+      }
+    ]
+  },
+  {
+    "route_no": "102K#",
+    "origin": "ISLAND GROUND",
+    "destination": "EZHIL NAGAR",
+    "stops": [
+      {
+        "name": "ISLAND GROUND",
+        "lat": 13.0778839,
+        "lng": 80.2780916
+      },
+      {
+        "name": "SECRETARIAT",
+        "lat": 13.0803743,
+        "lng": 80.2883666
+      },
+      {
+        "name": "CHEPAUK",
+        "lat": 13.0645131,
+        "lng": 80.2831179
+      },
+      {
+        "name": "Q.M.C",
+        "lat": 12.9713656,
+        "lng": 80.1856596
+      },
+      {
+        "name": "FORESHORE ESTATE",
+        "lat": 13.0249209,
+        "lng": 80.2776875
+      },
+      {
+        "name": "A.M.S.HOSPITAL",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "ADYAR O.T.",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "ADYAR DEPOT",
+        "lat": 12.9984686,
+        "lng": 80.2561546
+      },
+      {
+        "name": "LATTICE BRIDGE ROAD JN.",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KANDANCHAVADI",
+        "lat": 12.9669208,
+        "lng": 80.2482764
+      },
+      {
+        "name": "THORAPPAKKAM TEA SHOP",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "EASWARAN TEMPLE/PTC QRTS.",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "EZHIL NAGAR",
+        "lat": 13.1287209,
+        "lng": 80.2724837
+      }
+    ]
+  },
+  {
+    "route_no": "102M",
+    "origin": "ADYAR B.S.",
+    "destination": "MANAMATHI",
+    "stops": [
+      {
+        "name": "ADYAR B.S.",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "ADYAR DEPOT",
+        "lat": 12.9984686,
+        "lng": 80.2561546
+      },
+      {
+        "name": "SRP TOOLS",
+        "lat": 12.9794944,
+        "lng": 80.2528353
+      },
+      {
+        "name": "KANDANCHAVADI",
+        "lat": 12.9669208,
+        "lng": 80.2482764
+      },
+      {
+        "name": "THORAPPAKKAM TEA SHOP",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "MOOTAKARAN CHAVADI",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KARAPAKKAM",
+        "lat": 12.9117073,
+        "lng": 80.2277203
+      },
+      {
+        "name": "SHOZHANGANALLUR P.U.OFFICE",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KUMARAN NAGAR",
+        "lat": 13.1265486,
+        "lng": 80.2003672
+      },
+      {
+        "name": "SEMMANCHERI",
+        "lat": 12.8751861,
+        "lng": 80.2106332
+      },
+      {
+        "name": "NAVALUR",
+        "lat": 12.8282729,
+        "lng": 80.2203926
+      },
+      {
+        "name": "CHURCH",
+        "lat": 12.9924028,
+        "lng": 80.2059363
+      },
+      {
+        "name": "PALAVASTHIC CHEMICALS",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "HINDUSTAN ENG. COLLEGE",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KELAMBAKKAM",
+        "lat": 12.8121026,
+        "lng": 80.2285012
+      },
+      {
+        "name": "CHENGAMMAL RD. JN.",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KOMAN NAGAR RD JN.",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KALAVAKKAM TEA STALL",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "THIRUPORUR",
+        "lat": 12.9685261,
+        "lng": 80.248769
+      },
+      {
+        "name": "MANAMATHI ROAD JN",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "CHIRUTHAVOOR JN.",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "AMMUR COLONY",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KALAVAKKAM",
+        "lat": 12.746255,
+        "lng": 80.2016839
+      },
+      {
+        "name": "MANAMATHI SCHOOL",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "MANAMATHI",
+        "lat": 13.0,
+        "lng": 80.0
+      }
+    ]
+  },
+  {
+    "route_no": "102P",
+    "origin": "ISLAND GROUND",
+    "destination": "PERUMPAKKAM S.C.B.",
+    "stops": [
+      {
+        "name": "ISLAND GROUND",
+        "lat": 13.0778839,
+        "lng": 80.2780916
+      },
+      {
+        "name": "SECRETARIAT",
+        "lat": 13.0810225,
+        "lng": 80.2883335
+      },
+      {
+        "name": "CHEPAUK",
+        "lat": 13.0645131,
+        "lng": 80.2831179
+      },
+      {
+        "name": "Q.M.C",
+        "lat": 12.9713656,
+        "lng": 80.1856596
+      },
+      {
+        "name": "FORESHORE ESTATE",
+        "lat": 13.0249209,
+        "lng": 80.2776875
+      },
+      {
+        "name": "A.M.S.HOSPITAL",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "ADYAR O.T.",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "ADYAR DEPOT",
+        "lat": 12.9984686,
+        "lng": 80.2561546
+      },
+      {
+        "name": "SRP TOOLS",
+        "lat": 12.9794944,
+        "lng": 80.2528353
+      },
+      {
+        "name": "KANDANCHAVADI",
+        "lat": 12.9665741,
+        "lng": 80.2478057
+      },
+      {
+        "name": "THORAPPAKKAM TEA SHOP",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "MOOTAKARAN CHAVADI",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KARAPAKKAM",
+        "lat": 12.9117073,
+        "lng": 80.2277203
+      },
+      {
+        "name": "SHOZHANGANALLUR P.U.OFFICE",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KUMARAN NAGAR",
+        "lat": 13.1265486,
+        "lng": 80.2003672
+      },
+      {
+        "name": "NUCLEUS COMPANY",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "PERUMPAKKAM S.C.B.",
+        "lat": 13.0,
+        "lng": 80.0
+      }
+    ]
+  },
+  {
+    "route_no": "102E",
+    "origin": "THIRUVANMIYUR",
+    "destination": "SIRUSERI I.T PARK",
+    "stops": [
+      {
+        "name": "THIRUVANMIYUR",
+        "lat": 12.9858948,
+        "lng": 80.2644215
+      },
+      {
+        "name": "S.R.P TOOLS",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KANDANCHAVADI",
+        "lat": 12.9665741,
+        "lng": 80.2478057
+      },
+      {
+        "name": "THORAIPAKKAM TEA SHOP",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "MOOTAKARAN CHAVADI",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KARAPAKKAM",
+        "lat": 12.9117073,
+        "lng": 80.2277203
+      },
+      {
+        "name": "SHOLINGANALLUR P.U.OFFICE",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "KUMARAN NAGAR",
+        "lat": 13.1265486,
+        "lng": 80.2003672
+      },
+      {
+        "name": "SEMMANCHERI ALAMARAM",
+        "lat": 13.0,
+        "lng": 80.0
+      },
+      {
+        "name": "NAVALUR",
+        "lat": 12.8282729,
+        "lng": 80.2203926
+      },
+      {
+        "name": "SIRUSERI SIPCOT",
+        "lat": 12.8282729,
+        "lng": 80.2203926
+      },
+      {
+        "name": "SIRUSERI I.T PARK",
+        "lat": 13.0,
+        "lng": 80.0
+      }
     ]
   }
 ]

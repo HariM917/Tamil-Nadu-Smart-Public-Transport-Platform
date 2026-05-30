@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { apiService } from '../services/api';
 import GoogleMapView from '../components/maps/GoogleMapView';
 import { Bus, MapPin, Search, Clock, Navigation2, Compass, AlertCircle, Loader2 } from 'lucide-react';
@@ -85,7 +86,13 @@ export default function RouteInfo() {
       const x =
         Math.sin(dLat / 2) ** 2 +
         Math.cos((a.lat * Math.PI) / 180) * Math.cos((b.lat * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
-      distance += R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+      let segmentDist = R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
+      
+      // If segment is > 10km, it's likely a jump to a dummy coordinate (13.0, 80.0). Cap it to 1.5km.
+      if (segmentDist > 10) {
+        segmentDist = 1.5;
+      }
+      distance += segmentDist;
     }
     setRecommendedRoutes([
       {
@@ -131,7 +138,7 @@ export default function RouteInfo() {
         <div className="flex gap-4">
           <span className="hover:underline cursor-pointer">ABOUT US</span>
           <span>|</span>
-          <span className="hover:underline cursor-pointer">FARE LIST</span>
+          <Link to="/fares" className="hover:underline cursor-pointer">FARE LIST</Link>
           <span>|</span>
           <span className="hover:underline cursor-pointer">CONCESSION FARES</span>
           <span>|</span>
