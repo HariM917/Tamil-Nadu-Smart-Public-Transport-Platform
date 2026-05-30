@@ -9,6 +9,7 @@ import { ToastProvider } from './components/ToastProvider';
 // Layout
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import Chatbot from './components/layout/Chatbot';
 
 // Pages
 import Landing from './pages/Landing';
@@ -20,6 +21,7 @@ import Booking from './pages/Booking';
 import LiveTracking from './pages/LiveTracking';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
+import RouteInfo from './pages/RouteInfo';
 
 // Route Guards
 function PrivateRoute({ children }) {
@@ -45,6 +47,7 @@ const PAGE_TITLES = {
   '/tracking': 'Live Tracking — TN Smart Transport',
   '/profile': 'My Profile — TN Smart Transport',
   '/admin': 'Admin Panel — TN Smart Transport',
+  '/route-info': 'Route Information — TN Smart Transport',
 };
 
 function PageTitleUpdater() {
@@ -107,6 +110,14 @@ export default function App() {
                   }
                 />
                 <Route
+                  path="/route-info"
+                  element={
+                    <PrivateRoute>
+                      <RouteInfo />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
                   path="/profile"
                   element={
                     <PrivateRoute>
@@ -130,6 +141,7 @@ export default function App() {
               </Routes>
             </main>
             <Footer />
+            <Chatbot />
           </div>
         </Router>
       </ToastProvider>

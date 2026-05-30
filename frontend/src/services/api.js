@@ -82,6 +82,37 @@ export const apiService = {
       headers: getHeaders(),
     }),
 
+  getPassTypes: () =>
+    apiRequest(`${API_URL}/bus-pass/types`, { headers: getHeaders() }),
+
+  previewAadhaarOcr: async (file) => {
+    const token = localStorage.getItem('tn_token');
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await fetch(`${API_URL}/bus-pass/ocr-aadhaar`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'OCR preview failed');
+    return data;
+  },
+
+  searchRoutes: (source, destination) =>
+    apiRequest(
+      `${API_URL}/routes/search?source=${encodeURIComponent(source)}&destination=${encodeURIComponent(destination)}`,
+      { headers: getHeaders() }
+    ),
+
+  listRoutes: () =>
+    apiRequest(`${API_URL}/routes/list`, { headers: getHeaders() }),
+
+  listStops: () =>
+    apiRequest(`${API_URL}/routes/stops`, { headers: getHeaders() }),
+
   // ── Booking ─────────────────────────────
   searchBuses: (source, destination) =>
     apiRequest(
@@ -205,6 +236,4 @@ export const apiService = {
     return data;
   },
 
-  adminGetFleetAnalytics: () =>
-    apiRequest(`${API_URL}/admin/fleet-analytics`, { headers: getHeaders() }),
 };

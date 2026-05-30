@@ -1,6 +1,7 @@
+import re
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class UserBase(BaseModel):
@@ -32,8 +33,25 @@ class UserResponse(UserBase):
     id: int
     role: str
     is_verified: bool
+    aadhaar_number: Optional[str] = None
+    aadhaar_verified: Optional[bool] = False
     profile_image: Optional[str] = None
     created_at: datetime
+
+    @field_validator("aadhaar_number", mode="before")
+    @classmethod
+    def mask_aadhaar_on_response(cls, v: Optional[str]) -> Optional[str]:
+        """Expose only masked Aadhaar (XXXX XXXX 1234) in API responses."""
+        if not v:
+            return None
+        digits = re.sub(r"\D", "", v)
+        if len(digits) == 12:
+            return f"XXXX XXXX {digits[-4:]}"
+        if "XXXX" in str(v).upper():
+            return v
+        if len(digits) >= 4:
+            return f"XXXX XXXX {digits[-4:]}"
+        return v
 
     class Config:
         from_attributes = True

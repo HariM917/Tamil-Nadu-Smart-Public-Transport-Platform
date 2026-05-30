@@ -134,45 +134,68 @@ async def verify_aadhaar(
         extracted_text = ""
         logger.warning(f"OCR processing failed: {e}")
 
-    # 4. Perform validation checks
-    # Clean up the extracted text to look for the 12-digit number
+    # 4. Perform validation checks using details parser
+    ocr_details = ocr_processor.parse_extracted_text(extracted_text)
     clean_extracted_text = re.sub(r"\s+", "", extracted_text)
     
-    # Check if the entered Aadhaar number is present in the text (fuzzy check: remove spaces)
-    number_found = clean_input_number in clean_extracted_text
+    # Check if entered Aadhaar number is present in the text (fuzzy check: match last 4 or full number)
+    number_found = clean_input_number[-4:] in ocr_details.get("aadhaar", "") or clean_input_number in clean_extracted_text
     
-    # We also check for common Aadhaar keywords to make sure it's an Aadhaar document
+    # Check Name Match (fuzzy: at least one word from profile name exists in OCR name)
+    name_matched = True
+    if ocr_details.get("name") and current_user.full_name:
+        words_u = set(re.findall(r"\w+", current_user.full_name.lower()))
+        words_o = set(re.findall(r"\w+", ocr_details.get("name", "").lower()))
+        intersection = words_u.intersection(words_o)
+        name_matched = len(intersection) >= 1
+
+    # Check DOB Match (birth year matches)
+    dob_matched = True
+    if ocr_details.get("dob") and current_user.date_of_birth:
+        user_dob_year = current_user.date_of_birth.year
+        ocr_dob_str = ocr_details.get("dob", "")
+        ocr_year_match = re.search(r"\b\d{4}\b", ocr_dob_str)
+        if ocr_year_match:
+            dob_matched = int(ocr_year_match.group(0)) == user_dob_year
+
     keywords = ["india", "government", "unique", "identification", "authority", "enrollment", "dob", "year of birth", "gender", "male", "female", "aadhaar", "father", "address"]
     keyword_found = any(k in extracted_text.lower() for k in keywords)
 
-    # If the file name contains 'mock' or 'test', or if it's the default mock text, allow it for ease of testing
     is_mock_trigger = "mock" in file.filename.lower() or "test" in file.filename.lower() or "987654321098" in extracted_text
 
-    # Robust verification logic: must contain the number and at least one keyword (unless it's a test file)
-    if (number_found and keyword_found) or is_mock_trigger or clean_input_number == "987654321098":
-        # Success! Update user verification status
-        current_user.aadhaar_number = clean_input_number
-        current_user.aadhaar_verified = True
-        current_user.is_verified = True  # Keep original is_verified in sync
-        db.commit()
-        
-        return {
-            "status": "success",
-            "message": "Aadhaar verification successful.",
-            "aadhaar_number": clean_input_number,
-            "ocr_text_snippet": extracted_text[:200]
-        }
-    else:
-        # Failed verification
-        # Let's provide a helpful details message
-        detail_msg = "Aadhaar verification failed. "
+    # Fail verification if mismatch (unless it's a test file)
+    if not is_mock_trigger:
         if not number_found:
-            detail_msg += "The entered Aadhaar number could not be detected in the document image. "
-        if not keyword_found:
-            detail_msg += "The document does not appear to be a valid government Aadhaar card."
-            
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=detail_msg
-        )
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Aadhaar verification failed: Aadhaar number could not be detected in the document."
+            )
+        if not name_matched:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Aadhaar verification failed: Document name '{ocr_details.get('name')}' does not match profile name '{current_user.full_name}'."
+            )
+        if not dob_matched:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Aadhaar verification failed: Date of birth year in Aadhaar does not match registered profile."
+            )
+
+    from app.utils.aadhaar import mask_aadhaar
+
+    # Success — persist masked Aadhaar only (XXXX XXXX 1234)
+    current_user.aadhaar_number = mask_aadhaar(clean_input_number)
+    current_user.aadhaar_verified = True
+    current_user.is_verified = True
+    db.commit()
+
+    return {
+        "status": "success",
+        "message": "Aadhaar verification successful.",
+        "aadhaar_number": mask_aadhaar(clean_input_number),
+        "ocr_details": {
+            **ocr_details,
+            "aadhaar": ocr_details.get("aadhaar") or mask_aadhaar(clean_input_number),
+        },
+    }
 

@@ -32,6 +32,7 @@ export default function Navbar() {
 
   const navLinks = [
     { label: 'Dashboard', path: '/dashboard', icon: Home },
+    { label: 'Route Info', path: '/route-info', icon: Bus },
     { label: 'Live Tracking', path: '/tracking', icon: MapPin },
     { label: 'Book Tickets', path: '/booking', icon: Ticket },
     { label: 'Bus Pass', path: '/bus-pass', icon: Award },

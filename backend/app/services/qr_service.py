@@ -21,7 +21,7 @@ class QRService:
 
             img = qr.make_image(fill_color="black", back_color="white")
             buffered = BytesIO()
-            img.save(buffered, format="PNG")
+            img.save(buffered, format="PNG")  # type: ignore
             img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
             return f"data:image/png;base64,{img_str}"
         except Exception as e:

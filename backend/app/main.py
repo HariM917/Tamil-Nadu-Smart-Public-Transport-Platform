@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from app.core.config import settings
 from app.db.session import SessionLocal
 from app.db.init_db import init_db
-from app.api import auth, bus_pass, booking, tracking, admin
+from app.api import auth, bus_pass, booking, tracking, admin, chatbot, routes
 
 # Setup structured logging
 logging.basicConfig(
@@ -104,6 +104,8 @@ app.include_router(bus_pass.router, prefix=f"{settings.API_PREFIX}/bus-pass", ta
 app.include_router(booking.router, prefix=f"{settings.API_PREFIX}/booking", tags=["Ticket Booking"])
 app.include_router(tracking.router, prefix=f"{settings.API_PREFIX}/buses", tags=["Live Tracking"])
 app.include_router(admin.router, prefix=f"{settings.API_PREFIX}/admin", tags=["Admin Portal"])
+app.include_router(chatbot.router, prefix=f"{settings.API_PREFIX}/chatbot", tags=["AI Chatbot"])
+app.include_router(routes.router, prefix=f"{settings.API_PREFIX}/routes", tags=["Route Information"])
 
 
 # ── Root Endpoint ──

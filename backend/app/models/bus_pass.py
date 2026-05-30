@@ -18,6 +18,7 @@ class BusPass(Base):
     
     # Document verification
     document_url = Column(String(500), nullable=True)
+    bonafide_url = Column(String(500), nullable=True)
     document_type = Column(String(50), nullable=True)  # aadhar, student_id, senior_id
     
     # ML verification
@@ -25,6 +26,15 @@ class BusPass(Base):
     ml_eligibility_score = Column(Float, nullable=True)
     fraud_risk_score = Column(Float, nullable=True)
     ml_verification_status = Column(String(20), default="pending")  # pending, passed, flagged
+    
+    # New OCR Verification Details
+    ocr_name = Column(String(255), nullable=True)
+    ocr_dob = Column(String(100), nullable=True)
+    ocr_aadhaar = Column(String(100), nullable=True)
+    ocr_address = Column(String(500), nullable=True)
+    verification_score = Column(Float, default=0.0)
+    verification_level = Column(String(100), nullable=True)
+    cross_validation_results = Column(Text, nullable=True)
     
     # Status
     status = Column(String(20), nullable=False, default="pending")  # pending, approved, rejected, expired

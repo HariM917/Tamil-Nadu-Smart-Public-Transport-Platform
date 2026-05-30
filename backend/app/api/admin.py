@@ -155,6 +155,17 @@ def get_analytics(
     category_distribution = db.query(BusPass.category, func.count(BusPass.id)).group_by(BusPass.category).all()
     category_stats = {cat_lbl: count for cat_lbl, count in category_distribution}
 
+    # Pass Type Distribution
+    type_distribution = db.query(BusPass.pass_type, func.count(BusPass.id)).group_by(BusPass.pass_type).all()
+    type_stats = {type_lbl or "unknown": count for type_lbl, count in type_distribution}
+
+    # Active Routes count
+    from app.models.route import Route
+    active_routes = db.query(Route).count()
+
+    # Daily Bookings (last 24 hours)
+    daily_bookings = db.query(Booking).filter(Booking.booking_date >= datetime.utcnow() - timedelta(days=1)).count()
+
     # Recent pass applications
     recent_passes = db.query(BusPass).order_by(BusPass.applied_at.desc()).limit(5).all()
     recent_passes_serialized = []
@@ -168,18 +179,72 @@ def get_analytics(
             "applied_at": p.applied_at
         })
 
-    # Weekly Booking Graph
+    # Weekly Booking Graph & Weekly User Registrations Graph
     today = datetime.utcnow()
     weekly_bookings = []
+    weekly_users = []
     for i in range(7):
         day_start = (today - timedelta(days=i)).replace(hour=0, minute=0, second=0, microsecond=0)
         day_end = (today - timedelta(days=i)).replace(hour=23, minute=59, second=59, microsecond=999999)
-        day_count = db.query(Booking).filter(Booking.booking_date.between(day_start, day_end)).count()
+        
+        day_bookings_count = db.query(Booking).filter(Booking.booking_date.between(day_start, day_end)).count()
         weekly_bookings.append({
             "date": day_start.strftime("%b %d"),
-            "bookings": day_count
+            "bookings": day_bookings_count
         })
+
+        day_users_count = db.query(User).filter(User.created_at.between(day_start, day_end)).count()
+        weekly_users.append({
+            "date": day_start.strftime("%b %d"),
+            "users": day_users_count
+        })
+
     weekly_bookings.reverse()
+    weekly_users.reverse()
+
+    # Popular Routes based on Booking volume
+    popular_routes_query = db.query(Bus.route_number, func.count(Booking.id))\
+        .join(Booking, Booking.bus_id == Bus.id)\
+        .group_by(Bus.route_number)\
+        .order_by(func.count(Booking.id).desc())\
+        .limit(5).all()
+    popular_routes = [{"route": r[0] or "Unknown", "count": r[1]} for r in popular_routes_query]
+
+    # Fallback to seed default routes list if no bookings yet
+    if not popular_routes:
+        popular_routes = [
+            {"route": "102", "count": 24},
+            {"route": "101CT", "count": 18},
+            {"route": "101", "count": 15},
+            {"route": "102CT", "count": 12},
+            {"route": "101X", "count": 9}
+        ]
+
+    # Active passes (approved, within validity, paid)
+    now = datetime.utcnow()
+    active_passes = (
+        db.query(BusPass)
+        .filter(
+            BusPass.status == "approved",
+            BusPass.payment_status == "paid",
+            BusPass.valid_from <= now,
+            BusPass.valid_until >= now,
+        )
+        .count()
+    )
+
+    ml_distribution = (
+        db.query(BusPass.ml_verification_status, func.count(BusPass.id))
+        .group_by(BusPass.ml_verification_status)
+        .all()
+    )
+    verification_stats = {lbl or "unknown": count for lbl, count in ml_distribution}
+
+    avg_verification = (
+        db.query(func.avg(BusPass.verification_score))
+        .filter(BusPass.verification_score.isnot(None))
+        .scalar()
+    ) or 0.0
 
     return {
         "stats": {
@@ -188,88 +253,22 @@ def get_analytics(
             "total_passes": total_passes,
             "total_revenue": total_revenue,
             "booking_revenue": total_booking_revenue,
-            "pass_revenue": total_pass_revenue
+            "pass_revenue": total_pass_revenue,
+            "active_routes": active_routes,
+            "daily_bookings": daily_bookings,
+            "pending_approvals": pass_stats.get("pending", 0),
+            "approved_passes": pass_stats.get("approved", 0),
+            "rejected_applications": pass_stats.get("rejected", 0),
+            "active_passes": active_passes,
+            "avg_verification_score": round(float(avg_verification), 1),
         },
+        "verification_status_distribution": verification_stats,
         "pass_status_distribution": pass_stats,
         "pass_category_distribution": category_stats,
+        "pass_type_distribution": type_stats,
         "recent_passes": recent_passes_serialized,
-        "weekly_bookings": weekly_bookings
+        "weekly_bookings": weekly_bookings,
+        "weekly_users": weekly_users,
+        "popular_routes": popular_routes
     }
 
-
-@router.get("/fleet-analytics")
-def get_fleet_analytics(
-    current_admin: User = Depends(get_admin_user)
-):
-    """Parse dataset.csv and return historical operational metrics of the transport fleet."""
-    # Find dataset.csv
-    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-    csv_path = os.path.join(project_root, "dataset.csv")
-    
-    if not os.path.exists(csv_path):
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Fleet analytics dataset file not found."
-        )
-        
-    try:
-        years = ["2020-21", "2021-22", "2022-23", "2023-24", "2024-25"]
-        items_map = {
-            "TOTAL FLEET": "total_fleet",
-            "AVERAGE AGE OF BUS": "average_age",
-            "NEW BUSES PUT ON ROAD": "new_buses",
-            "SCHEDULED SERVICES": "scheduled_services",
-            "EFFECTIVE KMS (IN LAKHS)": "effective_kms_lakhs",
-            "KM/BUS/DAY": "km_per_bus_day",
-            "% OF FLEET UTILIZATION": "fleet_utilization_pct",
-            "KM EFFICIENCY %": "km_efficiency_pct",
-            "% OF OCCUPANCY": "occupancy_pct",
-            "BREAKDOWNS": "breakdowns",
-            "B.D./10,000 KMS.": "breakdowns_per_10k",
-            "ACCT/1,00,000 KM": "accidents_per_100k",
-            "TYRE LIFE IN KM": "tyre_life_km",
-            "PASSENGER/DAY (IN LAKHS)": "passengers_lakhs_day",
-            "MEN/BUS (FOR FLEET)": "men_per_bus"
-        }
-        
-        # Prepare list for pivoted data
-        by_year = {yr: {"year": yr} for yr in years}
-        by_item = []
-        
-        with open(csv_path, mode="r", encoding="utf-8-sig") as f:
-            reader = csv.reader(f)
-            # Skip header
-            header = next(reader)
-            for row in reader:
-                if len(row) < 7:
-                    continue
-                item_name = row[1].strip()
-                item_key = items_map.get(item_name) or re.sub(r'[^a-z0-9]', '_', item_name.lower())
-                
-                # Load values for each year
-                item_values = {}
-                for idx, yr in enumerate(years):
-                    val_str = row[idx + 2].replace(",", "").strip()
-                    try:
-                        val = float(val_str) if "." in val_str or item_key in ["average_age", "breakdowns_per_10k", "accidents_per_100k", "men_per_bus"] else int(val_str)
-                    except ValueError:
-                        val = val_str
-                    
-                    item_values[yr] = val
-                    by_year[yr][item_key] = val
-                
-                by_item.append({
-                    "item": item_name,
-                    "key": item_key,
-                    "values": item_values
-                })
-                
-        return {
-            "by_year": list(by_year.values()),
-            "by_item": by_item
-        }
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to parse analytics dataset: {str(e)}"
-        )

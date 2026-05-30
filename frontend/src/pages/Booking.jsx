@@ -222,9 +222,21 @@ export default function Booking() {
               <h2 className="font-display font-bold text-2xl text-tn-text">Booking Confirmed!</h2>
               <p className="text-sm text-tn-text-secondary mt-1 mb-6">Have your QR code ready for the conductor.</p>
               
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 w-full shadow-sm">
-                <img src={ticket.ticket?.qr_code_url} alt="Ticket QR" className="mx-auto h-40 w-40 mb-4" />
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 w-full shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-tn-primary to-emerald-500" />
+                <div className="pt-2 text-center">
+                  <p className="text-xs text-tn-text-secondary font-mono tracking-wider font-semibold">TICKET ID: {ticket.ticket?.ticket_number || `TN-TKT-${ticket.id}`}</p>
+                </div>
+                <img src={ticket.ticket?.qr_code_url} alt="Ticket QR" className="mx-auto h-40 w-40 my-4 p-1 bg-white border border-slate-100 rounded-lg shadow-sm" />
                 <div className="border-t border-dashed border-slate-200 pt-4 space-y-2 text-left">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-tn-text-muted">Passenger</span>
+                    <span className="font-bold text-tn-text">{user?.full_name || 'Passenger'}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-tn-text-muted">Bus No</span>
+                    <span className="font-bold text-tn-primary font-mono">{ticket.bus?.bus_number || `TN-01-N-${1000 + ticket.bus_id}`}</span>
+                  </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-tn-text-muted">Route</span>
                     <span className="font-bold text-tn-text">{ticket.source} to {ticket.destination}</span>
@@ -235,9 +247,9 @@ export default function Booking() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-tn-text-muted">Seat Number</span>
-                    <span className="font-bold text-tn-text">{ticket.seat_number}</span>
+                    <span className="font-bold text-tn-text">Seat {ticket.seat_number}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-sm border-t border-slate-100 pt-2">
                     <span className="text-tn-text-muted">Amount Paid</span>
                     <span className="font-bold text-emerald-600">₹{ticket.amount}</span>
                   </div>

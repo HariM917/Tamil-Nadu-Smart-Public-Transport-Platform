@@ -63,3 +63,69 @@ def track_bus(
         "bus": bus_response,
         "tracking": eta_info
     }
+
+
+from app.schemas.bus import BusGPSUpdate
+from datetime import datetime
+
+@router.post("/{bus_id}/gps-update", response_model=BusResponse)
+def gps_update(
+    bus_id: int,
+    gps_in: BusGPSUpdate,
+    db: Session = Depends(get_db)
+):
+    """
+    Simulated Bus GPS Device endpoint. Pushes coordinate, speed, 
+    heading, and driver/status updates directly to the database.
+    """
+    bus = db.query(Bus).filter(Bus.id == bus_id).first()
+    if not bus:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Bus not found."
+        )
+
+    bus.current_lat = gps_in.current_lat
+    bus.current_lng = gps_in.current_lng
+    if gps_in.current_speed is not None:
+        bus.current_speed = gps_in.current_speed
+    if gps_in.heading is not None:
+        bus.heading = gps_in.heading
+    if gps_in.status is not None:
+        bus.status = gps_in.status
+    if gps_in.driver_name is not None:
+        bus.driver_name = gps_in.driver_name
+    if gps_in.driver_status is not None:
+        bus.driver_status = gps_in.driver_status
+        
+    bus.last_updated = datetime.utcnow()
+    
+    db.commit()
+    db.refresh(bus)
+    return bus
+
+
+@router.get("/status/{bus_id}")
+def get_bus_tracking_status(bus_id: int, db: Session = Depends(get_db)):
+    """
+    Get tracking status formatted specifically for the tracking system.
+    """
+    bus = db.query(Bus).filter(Bus.id == bus_id).first()
+    if not bus:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Bus not found."
+        )
+    
+    # Calculate ETA to final destination
+    eta_info = tracking_service.get_eta_predictions(bus, bus.destination)
+    
+    return {
+        "bus_number": bus.bus_number,
+        "route_no": bus.route_number or bus.bus_number,
+        "current_stop": eta_info.get("current_stop", "Unknown"),
+        "next_stop": eta_info.get("next_stop", "Unknown"),
+        "speed": int(bus.current_speed or 0),
+        "eta": int(eta_info.get("eta_minutes", 0)),
+        "status": bus.status.capitalize() if bus.status else "Idle"
+    }

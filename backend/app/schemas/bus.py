@@ -18,6 +18,8 @@ class BusBase(BaseModel):
     frequency_minutes: Optional[int] = None
     base_fare: float = 10.0
     per_km_fare: float = 1.5
+    driver_name: Optional[str] = "Rajesh Kumar"
+    driver_status: Optional[str] = "Active"
 
 
 class BusCreate(BusBase):
@@ -40,6 +42,8 @@ class BusUpdate(BaseModel):
     per_km_fare: Optional[float] = None
     is_active: Optional[bool] = None
     status: Optional[str] = None
+    driver_name: Optional[str] = None
+    driver_status: Optional[str] = None
 
 
 class BusGPSUpdate(BaseModel):
@@ -48,6 +52,8 @@ class BusGPSUpdate(BaseModel):
     current_speed: Optional[float] = 0.0
     heading: Optional[float] = 0.0
     status: Optional[str] = "running"
+    driver_name: Optional[str] = None
+    driver_status: Optional[str] = None
 
 
 class BusResponse(BusBase):

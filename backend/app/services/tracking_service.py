@@ -136,11 +136,37 @@ class TrackingService:
         # Add buffer for stops/traffic
         eta_minutes += 2
 
+        # Determine current_stop and next_stop based on closest stop sequence
+        current_stop = "Unknown"
+        next_stop = "Unknown"
+        if bus.stops and len(bus.stops) > 0:
+            closest_idx = 0
+            min_dist = float('inf')
+            for idx, stop in enumerate(bus.stops):
+                stop_lat = float(stop.get("lat", 0))
+                stop_lng = float(stop.get("lng", 0))
+                d = TrackingService.haversine_distance(bus.current_lat, bus.current_lng, stop_lat, stop_lng)
+                if d < min_dist:
+                    min_dist = d
+                    closest_idx = idx
+            
+            current_stop = bus.stops[closest_idx].get("name", "Unknown")
+            if closest_idx < len(bus.stops) - 1:
+                next_stop = bus.stops[closest_idx + 1].get("name", "Unknown")
+            else:
+                next_stop = bus.stops[closest_idx].get("name", "Unknown") # At destination
+
         return {
             "eta_minutes": eta_minutes,
             "distance_km": round(dist, 2),
             "current_speed_kmh": round(avg_speed_kmh, 1),
-            "message": "Live tracking active"
+            "message": "Live tracking active",
+            "driver_name": bus.driver_name or "Rajesh Kumar",
+            "driver_status": bus.driver_status or "Active",
+            "current_lat": bus.current_lat,
+            "current_lng": bus.current_lng,
+            "current_stop": current_stop,
+            "next_stop": next_stop
         }
 
 
